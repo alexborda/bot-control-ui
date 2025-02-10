@@ -12,18 +12,10 @@ export function App() {
   const [activeTab, setActiveTab] = useState("status");
   const [menuOpen, setMenuOpen] = useState(false);
   const [submenuOpen, setSubmenuOpen] = useState(null);
-  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   const [darkMode, setDarkMode] = useState(
     localStorage.getItem("theme") === "dark"
   );
- // Detectar si es móvil o PC en tiempo real
-  useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
+
   useEffect(() => {
     if (darkMode) {
       document.documentElement.classList.add("dark");
