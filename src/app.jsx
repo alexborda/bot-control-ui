@@ -64,6 +64,11 @@ const handleStop = async () => {
               <button className="submenu-item" onClick={() => { setActiveTab("price"); setMenuOpen(false); }}>💰 Precio</button>
               <button className="submenu-item" onClick={() => { setActiveTab("theme"); setMenuOpen(false); }}>Theme</button>
             </div>
+          )};
+          {submenuOpen === "tabs" && (
+            <div className="submenu">
+              <button className="submenu-item" onClick={() => { setActiveTab("theme"); setMenuOpen(false); }}>Theme</button>
+            </div>
           )}
         </div>
       </nav>
