@@ -80,6 +80,8 @@ useEffect(() => {
               <button className="submenu-item" onClick={() => { setActiveTab("order"); setMenuOpen(false); }}>🛒 Enviar Orden</button>
               <button className="submenu-item" onClick={() => { setActiveTab("price"); setMenuOpen(false); }}>💰 Precio</button>
               <button className="submenu-item" onClick={() => { setActiveTab("theme"); setMenuOpen(false); }}>🌙 Modo</button>
+              <button className="button" onClick={handleStart}>🟢 Iniciar Bot</button>
+              <button className="button" onClick={handleStop}>🔴 Detener Bot</button>
             </div>
           )}
         <button className="menu-item" onClick={() => {setActiveTab("status"); setMenuOpen(false); }}>📊 Estado</button>
@@ -95,8 +97,7 @@ useEffect(() => {
           <div className="card">
             <h2>📊 Estado del Bot</h2>
             <p>{status === null ? "Cargando..." : status ? "🟢 Activo" : "🔴 Inactivo"}</p>
-            <button className="button" onClick={handleStart}>🟢 Iniciar Bot</button>
-            <button className="button" onClick={handleStop}>🔴 Detener Bot</button>
+            
           </div>
         )}
         {activeTab === "order" && (
