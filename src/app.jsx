@@ -55,11 +55,8 @@ const handleStop = async () => {
       {/* Navbar */}
       <nav className="navbar">
         <h1 className="navbar-title">Trading Bot</h1>
-        <button className="menu-button" onClick={() => setMenuOpen(!menuOpen)}>☰</button>
         <div className={`menu ${menuOpen ? "open" : ""}`}>
-          <button className="menu-item" onClick={() => setSubmenuOpen(submenuOpen === "tabs" ? null : "tabs")}>
-            📁 Secciones
-          </button>
+          <button className="menu-item" onClick={() => setSubmenuOpen(submenuOpen === "tabs" ? null : "tabs")}>☰</button>
           {submenuOpen === "tabs" && (
             <div className="submenu">
               <button className="submenu-item" onClick={() => { setActiveTab("status"); setMenuOpen(false); }}>📊 Estado</button>
@@ -71,6 +68,8 @@ const handleStop = async () => {
             {darkMode ? "🌞 Modo Claro" : "🌙 Modo Oscuro"}
           </button>
         </div>
+        <button className="button" onClick={handleStart}>🟢 Iniciar Bot</button>
+        <button className="button" onClick={handleStop}>🔴 Detener Bot</button>
       </nav>
 
       {/* Pestañas en la pantalla */}
