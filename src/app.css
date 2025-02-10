@@ -39,3 +39,6 @@
 .footer {
   @apply mt-8 text-gray-400 text-center text-xs md:text-sm;
 }
+.title {
+  @apply text-2xl font-semibold text-center text-gray-200 mb-4 md:text-3xl;
+}

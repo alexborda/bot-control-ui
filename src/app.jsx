@@ -55,7 +55,7 @@ export function App() {
 
       {/* Contenedor principal con pestañas */}
       <div className="container">
-        <h1 className="text-3xl font-extrabold text-center mb-6 tracking-wide md:text-4xl">Panel de Control</h1>
+      <h1 className="title">Panel de Control</h1>
 
         {/* Pestañas */}
         <div className="tabs">
