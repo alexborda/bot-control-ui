@@ -14,7 +14,22 @@ export function App() {
   const [darkMode, setDarkMode] = useState(
     localStorage.getItem("theme") === "dark"
   );
+const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 
+useEffect(() => {
+  const handleResize = () => {
+    setIsMobile(window.innerWidth < 768);
+  };
+
+  // Ejecutar la detección en el primer render
+  handleResize();
+
+  // Agregar event listener para cambios en el tamaño de pantalla
+  window.addEventListener("resize", handleResize);
+
+  // Limpiar el event listener cuando el componente se desmonta
+  return () => window.removeEventListener("resize", handleResize);
+}, []);
   useEffect(() => {
     if (darkMode) {
       document.documentElement.classList.add("dark");
@@ -40,47 +55,46 @@ export function App() {
     };
     return () => ws.close();
   }, []);
-// Iniciar y detener bot
-const handleStart = async () => {
-  await fetch(`${API_URL}/start`, { method: "POST" });
-  alert("Bot iniciado");
-};
 
-const handleStop = async () => {
-  await fetch(`${API_URL}/stop`, { method: "POST" });
-  alert("Bot detenido");
-};
+  // Iniciar y detener bot
+  const handleStart = async () => {
+    await fetch(`${API_URL}/start`, { method: "POST" });
+    alert("Bot iniciado");
+  };
+
+  const handleStop = async () => {
+    await fetch(`${API_URL}/stop`, { method: "POST" });
+    alert("Bot detenido");
+  };
+
   return (
     <div className="app">
       {/* Navbar */}
       <nav className="navbar">
         <h1 className="navbar-title">Trading Bot</h1>
+        <button className="menu-button" onClick={() => setMenuOpen(!menuOpen)}>☰</button>
         <div className={`menu ${menuOpen ? "open" : ""}`}>
-          <button className="menu-item" onClick={() => setSubmenuOpen(submenuOpen === "tabs" ? null : "tabs")}>☰</button>
+          <button className="menu-item" onClick={() => setSubmenuOpen(submenuOpen === "tabs" ? null : "tabs")}>
+            📁 Secciones
+          </button>
           {submenuOpen === "tabs" && (
-              <div className="submenu-item" onClick={() => { setActiveTab("status"); setMenuOpen(false); }}>📊 Estado</div>
+            <div className="submenu">
+              <button className="submenu-item" onClick={() => { setActiveTab("status"); setMenuOpen(false); }}>📊 Estado</button>
+              <button className="submenu-item" onClick={() => { setActiveTab("order"); setMenuOpen(false); }}>🛒 Enviar Orden</button>
+              <button className="submenu-item" onClick={() => { setActiveTab("price"); setMenuOpen(false); }}>💰 Precio</button>
+              <button className="submenu-item" onClick={() => { setActiveTab("theme"); setMenuOpen(false); }}>🌙 Modo</button>
+            </div>
           )}
-          {submenuOpen === "tabs" && (
-              <div className="submenu-item" onClick={() => { setActiveTab("order"); setMenuOpen(false); }}>🛒 Enviar Orden</div>
-          )}
-          {submenuOpen === "tabs" && (
-              <div className="submenu-item" onClick={() => { setActiveTab("price"); setMenuOpen(false); }}>💰 Precio</div>
-          )}
-          {submenuOpen === "tabs" && ( 
-              <div className="submenu-item" onClick={() => { setActiveTab("theme"); setMenuOpen(false); }}>🌙Theme</div>
-          )}
-          <button className={`tab-button ${activeTab === "status" ? "active" : ""}`} onClick={() => setActiveTab("status")}>📊 Estado</button>
-          <button className={`tab-button ${activeTab === "order" ? "active" : ""}`} onClick={() => setActiveTab("order")}>🛒 Enviar Orden</button>
-          <button className={`tab-button ${activeTab === "price" ? "active" : ""}`} onClick={() => setActiveTab("price")}>💰 Precio</button>
-          <button className={`tab-button ${activeTab === "price" ? "active" : ""}`} onClick={() => setActiveTab("theme")}>🌙Theme</button>
         </div>
-        
       </nav>
+
       {/* Pestañas en la pantalla */}
-        <div className="tabs-container">
-            
-        </div>
-      
+      <div className="tabs-container">
+        <button className={`tab-button ${activeTab === "status" ? "active" : ""}`} onClick={() => setActiveTab("status")}>📊 Estado</button>
+        <button className={`tab-button ${activeTab === "order" ? "active" : ""}`} onClick={() => setActiveTab("order")}>🛒 Enviar Orden</button>
+        <button className={`tab-button ${activeTab === "price" ? "active" : ""}`} onClick={() => setActiveTab("price")}>💰 Precio</button>
+        <button className={`tab-button ${activeTab === "theme" ? "active" : ""}`} onClick={() => setActiveTab("theme")}>🌙 Modo</button>
+      </div>
 
       {/* Contenido dinámico */}
       <div className="container">
@@ -112,8 +126,8 @@ const handleStop = async () => {
           <div className="card">
             <h2>Modo Oscuro o Claro</h2>
             <button className="menu-item" onClick={() => setDarkMode(!darkMode)}>
-            {darkMode ? "🌞 Modo Claro" : "🌙 Modo Oscuro"}
-          </button>
+              {darkMode ? "🌞 Modo Claro" : "🌙 Modo Oscuro"}
+            </button>
           </div>
         )}
       </div>
