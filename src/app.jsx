@@ -60,7 +60,15 @@ const handleStop = async () => {
           {submenuOpen === "tabs" && (
             <div className="submenu">
               <button className="submenu-item" onClick={() => { setActiveTab("status"); setMenuOpen(false); }}>📊 Estado</button>
+            </div>
+          )}
+          {submenuOpen === "tabs" && (
+            <div className="submenu">
               <button className="submenu-item" onClick={() => { setActiveTab("order"); setMenuOpen(false); }}>🛒 Enviar Orden</button>
+            </div>
+          )}
+          {submenuOpen === "tabs" && (
+            <div className="submenu">
               <button className="submenu-item" onClick={() => { setActiveTab("price"); setMenuOpen(false); }}>💰 Precio</button>
             </div>
           )}
