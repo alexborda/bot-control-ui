@@ -2,28 +2,22 @@
 @tailwind components;
 @tailwind utilities;
 
-#app {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
-}
-
+/* Mejoras para `.logo` */
 .logo {
-  height: 6em;
-  padding: 1.5em;
+  @apply h-16 p-4 transition-transform transform hover:scale-110;
 }
+
+/* Sombras en hover */
 .logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.preact:hover {
-  filter: drop-shadow(0 0 2em #673ab8aa);
+  @apply drop-shadow-lg;
 }
 
+/* Estilo para tarjetas */
 .card {
-  padding: 2em;
+  @apply p-8 bg-gray-800 rounded-lg shadow-md;
 }
 
+/* Links estilizados */
 .read-the-docs {
-  color: #888;
+  @apply text-gray-400 hover:text-blue-400 transition duration-300;
 }
