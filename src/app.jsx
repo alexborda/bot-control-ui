@@ -72,8 +72,8 @@ useEffect(() => {
       {/* Navbar */}
       <nav className="navbar">
         <h1 className="navbar-title">Trading Bot</h1>
-        <button className="menu-item" onClick={() => setMenuOpen(submenuOpen === "tabs" ? null : "tabs")}>☰</button>
-        <div className={`menu ${menuOpen ? "open" : ""}`}>
+        <button className="menu-item" onClick={() => setMenuOpen(menuOpen === "tabs" ? null : "tabs")}>☰</button>
+        <div className={`menu ${submenuOpen ? "open" : ""}`}>
           {submenuOpen === "tabs" && (
             <div className="submenu">
               <button className="submenu-item" onClick={() => { setActiveTab("status"); setMenuOpen(false); }}>📊 Estado</button>
