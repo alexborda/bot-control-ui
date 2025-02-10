@@ -62,11 +62,9 @@ const handleStop = async () => {
               <button className="submenu-item" onClick={() => { setActiveTab("status"); setMenuOpen(false); }}>📊 Estado</button>
               <button className="submenu-item" onClick={() => { setActiveTab("order"); setMenuOpen(false); }}>🛒 Enviar Orden</button>
               <button className="submenu-item" onClick={() => { setActiveTab("price"); setMenuOpen(false); }}>💰 Precio</button>
+              <button className="submenu-item" onClick={() => { setActiveTab("theme"); setMenuOpen(false); }}>Theme</button>
             </div>
           )}
-          <button className="menu-item" onClick={() => setDarkMode(!darkMode)}>
-            {darkMode ? "🌞 Modo Claro" : "🌙 Modo Oscuro"}
-          </button>
         </div>
       </nav>
 
@@ -75,6 +73,7 @@ const handleStop = async () => {
         <button className={`tab-button ${activeTab === "status" ? "active" : ""}`} onClick={() => setActiveTab("status")}>📊 Estado</button>
         <button className={`tab-button ${activeTab === "order" ? "active" : ""}`} onClick={() => setActiveTab("order")}>🛒 Enviar Orden</button>
         <button className={`tab-button ${activeTab === "price" ? "active" : ""}`} onClick={() => setActiveTab("price")}>💰 Precio</button>
+        <button className={`tab-button ${activeTab === "price" ? "active" : ""}`} onClick={() => setActiveTab("theme")}>Theme</button>
       </div>
 
       {/* Contenido dinámico */}
@@ -101,6 +100,14 @@ const handleStop = async () => {
           <div className="card">
             <h2>💰 Precio en Vivo</h2>
             <p>{price ? `$${price}` : "Cargando..."}</p>
+          </div>
+        )}
+        {activeTab === "theme" && (
+          <div className="card">
+            <h2>Modo Oscuro o Claro</h2>
+            <button className="menu-item" onClick={() => setDarkMode(!darkMode)}>
+            {darkMode ? "🌞 Modo Claro" : "🌙 Modo Oscuro"}
+          </button>
           </div>
         )}
       </div>
