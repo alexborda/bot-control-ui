@@ -24,14 +24,14 @@ export function App() {
       localStorage.setItem("theme", "light");
     }
   }, [darkMode]);
-
+// Obtener estado del bot
   useEffect(() => {
     fetch(`${API_URL}/status`)
       .then(res => res.json())
       .then(data => setStatus(data.status))
       .catch(() => setStatus(null));
   }, []);
-
+// WebSocket para precios en vivo
   useEffect(() => {
     const ws = new WebSocket("wss://tradingbot.up.railway.app/ws/market");
     ws.onmessage = (event) => {
@@ -40,7 +40,16 @@ export function App() {
     };
     return () => ws.close();
   }, []);
+// Iniciar y detener bot
+const handleStart = async () => {
+  await fetch(`${API_URL}/start`, { method: "POST" });
+  alert("Bot iniciado");
+};
 
+const handleStop = async () => {
+  await fetch(`${API_URL}/stop`, { method: "POST" });
+  alert("Bot detenido");
+};
   return (
     <div className="app">
       {/* Navbar */}
