@@ -77,16 +77,17 @@ const handleStop = async () => {
               <div className="submenu-item" onClick={() => { setActiveTab("theme"); setMenuOpen(false); }}>Theme</div>
             </div>
           )}
-          {/* Pestañas en la pantalla */}
-          <div className="tabs-container">
+          <button className={`tab-button ${activeTab === "status" ? "active" : ""}`} onClick={() => setActiveTab("status")}>📊 Estado</button>
+        </div>
+        
+      </nav>
+      {/* Pestañas en la pantalla */}
+        <div className="tabs-container">
             <button className={`tab-button ${activeTab === "status" ? "active" : ""}`} onClick={() => setActiveTab("status")}>📊 Estado</button>
             <button className={`tab-button ${activeTab === "order" ? "active" : ""}`} onClick={() => setActiveTab("order")}>🛒 Enviar Orden</button>
             <button className={`tab-button ${activeTab === "price" ? "active" : ""}`} onClick={() => setActiveTab("price")}>💰 Precio</button>
             <button className={`tab-button ${activeTab === "price" ? "active" : ""}`} onClick={() => setActiveTab("theme")}>Theme</button>
-          </div>
         </div>
-      </nav>
-
       
 
       {/* Contenido dinámico */}
