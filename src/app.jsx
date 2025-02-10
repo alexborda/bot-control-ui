@@ -53,22 +53,26 @@ export function App() {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-white text-gray-900 dark:bg-gray-900 dark:text-gray-100 transition-all duration-300">
-      {/* Navbar con menú para móviles y botón de modo oscuro */}
+      {/* Navbar con menú desplegable y modo oscuro */}
       <nav className="navbar">
         <h1 className="text-2xl font-bold flex items-center gap-2 md:text-3xl">
           🚀 Trading Bot {isMobile ? "📱" : "💻"}
         </h1>
-        <div className="flex items-center">
-          <button className="mr-4 bg-gray-200 dark:bg-gray-700 p-2 rounded-full shadow-md" onClick={() => setDarkMode(!darkMode)}>
-            {darkMode ? "🌞" : "🌙"}
+        <button className="md:hidden" onClick={() => setMenuOpen(!menuOpen)}>
+          ☰
+        </button>
+        <div className={`absolute top-14 right-4 bg-gray-700 p-4 rounded-lg shadow-lg transition-all duration-300 ${menuOpen ? "block" : "hidden"} md:relative md:top-0 md:right-0 md:bg-transparent md:p-0 md:shadow-none md:flex md:space-x-6`}>
+          <a href="/" className="block text-white hover:text-blue-400 md:inline-block" onClick={() => setMenuOpen(false)}>Inicio</a>
+          <a href="/dashboard" className="block text-white hover:text-blue-400 md:inline-block" onClick={() => setMenuOpen(false)}>Panel</a>
+          <button
+            className="w-full bg-gray-600 text-white p-2 rounded-lg mt-2 md:mt-0 md:w-auto"
+            onClick={() => {
+              setDarkMode(!darkMode);
+              setMenuOpen(false);
+            }}
+          >
+            {darkMode ? "🌞 Modo Claro" : "🌙 Modo Oscuro"}
           </button>
-          <button className="md:hidden" onClick={() => setMenuOpen(!menuOpen)}>
-            ☰
-          </button>
-        </div>
-        <div className={`space-x-6 text-sm md:text-lg md:flex ${menuOpen ? "block" : "hidden"} absolute top-14 right-4 bg-gray-700 p-4 rounded-lg shadow-lg md:relative md:top-0 md:right-0 md:bg-transparent md:p-0 md:shadow-none`}>
-          <a href="/" className="block md:inline-block">Inicio</a>
-          <a href="/dashboard" className="block md:inline-block">Panel</a>
         </div>
       </nav>
 
@@ -112,14 +116,7 @@ export function App() {
                   <option value="sell">Venta</option>
                 </select>
               </div>
-              <button type="submit" className="button button-blue mt-4" onClick={(e) => {
-                e.preventDefault();
-                fetch(`${API_URL}/trade`, {
-                  method: "POST",
-                  headers: { "Content-Type": "application/json" },
-                  body: JSON.stringify({ symbol, qty, order_type: orderType, secret: "supersecreto123" }),
-                }).then(res => res.json()).then(data => alert(`✅ Orden enviada: ${JSON.stringify(data)}`));
-              }}>
+              <button type="submit" className="button button-blue mt-4">
                 📩 Enviar Orden
               </button>
             </form>
