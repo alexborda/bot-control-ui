@@ -59,22 +59,22 @@ const handleStop = async () => {
           <button className="menu-item" onClick={() => setSubmenuOpen(submenuOpen === "tabs" ? null : "tabs")}>☰</button>
           {submenuOpen === "tabs" && (
             <div className="submenu">
-              <button className="submenu-item" onClick={() => { setActiveTab("status"); setMenuOpen(false); }}>📊 Estado</button>
+              <div className="submenu-item" onClick={() => { setActiveTab("status"); setMenuOpen(false); }}>📊 Estado</div>
             </div>
           )}
           {submenuOpen === "tabs" && (
             <div className="submenu">
-              <button className="submenu-item" onClick={() => { setActiveTab("order"); setMenuOpen(false); }}>🛒 Enviar Orden</button>
+              <div className="submenu-item" onClick={() => { setActiveTab("order"); setMenuOpen(false); }}>🛒 Enviar Orden</div>
             </div>
           )}
           {submenuOpen === "tabs" && (
             <div className="submenu">
-              <button className="submenu-item" onClick={() => { setActiveTab("price"); setMenuOpen(false); }}>💰 Precio</button>
+              <div className="submenu-item" onClick={() => { setActiveTab("price"); setMenuOpen(false); }}>💰 Precio</div>
             </div>
           )}
           {submenuOpen === "tabs" && (
             <div className="submenu">
-              <button className="submenu-item" onClick={() => { setActiveTab("theme"); setMenuOpen(false); }}>Theme</button>
+              <div className="submenu-item" onClick={() => { setActiveTab("theme"); setMenuOpen(false); }}>Theme</div>
             </div>
           )}
         </div>
