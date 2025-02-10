@@ -1,5 +1,5 @@
 import { useState, useEffect } from "preact/hooks";
-import "/src/app.css";
+
 const API_URL = "https://tradingbot.up.railway.app";
 
 export function App() {
