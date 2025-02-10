@@ -58,29 +58,21 @@ const handleStop = async () => {
         <div className={`menu ${menuOpen ? "open" : ""}`}>
           <button className="menu-item" onClick={() => setSubmenuOpen(submenuOpen === "tabs" ? null : "tabs")}>☰</button>
           {submenuOpen === "tabs" && (
-            
               <div className="submenu-item" onClick={() => { setActiveTab("status"); setMenuOpen(false); }}>📊 Estado</div>
-            
           )}
           {submenuOpen === "tabs" && (
-            <div className="submenu">
               <div className="submenu-item" onClick={() => { setActiveTab("order"); setMenuOpen(false); }}>🛒 Enviar Orden</div>
-            </div>
           )}
           {submenuOpen === "tabs" && (
-            <div className="submenu">
               <div className="submenu-item" onClick={() => { setActiveTab("price"); setMenuOpen(false); }}>💰 Precio</div>
-            </div>
           )}
-          {submenuOpen === "tabs" && (
-            <div className="submenu">
-              <div className="submenu-item" onClick={() => { setActiveTab("theme"); setMenuOpen(false); }}>Theme</div>
-            </div>
+          {submenuOpen === "tabs" && ( 
+              <div className="submenu-item" onClick={() => { setActiveTab("theme"); setMenuOpen(false); }}>🌙Theme</div>
           )}
           <button className={`tab-button ${activeTab === "status" ? "active" : ""}`} onClick={() => setActiveTab("status")}>📊 Estado</button>
           <button className={`tab-button ${activeTab === "order" ? "active" : ""}`} onClick={() => setActiveTab("order")}>🛒 Enviar Orden</button>
           <button className={`tab-button ${activeTab === "price" ? "active" : ""}`} onClick={() => setActiveTab("price")}>💰 Precio</button>
-          <button className={`tab-button ${activeTab === "price" ? "active" : ""}`} onClick={() => setActiveTab("theme")}>Theme</button>
+          <button className={`tab-button ${activeTab === "price" ? "active" : ""}`} onClick={() => setActiveTab("theme")}>🌙Theme</button>
         </div>
         
       </nav>
