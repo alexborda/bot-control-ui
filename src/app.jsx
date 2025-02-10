@@ -68,8 +68,6 @@ const handleStop = async () => {
             {darkMode ? "🌞 Modo Claro" : "🌙 Modo Oscuro"}
           </button>
         </div>
-        <button className="button" onClick={handleStart}>🟢 Iniciar Bot</button>
-        <button className="button" onClick={handleStop}>🔴 Detener Bot</button>
       </nav>
 
       {/* Pestañas en la pantalla */}
@@ -85,6 +83,8 @@ const handleStop = async () => {
           <div className="card">
             <h2>📊 Estado del Bot</h2>
             <p>{status === null ? "Cargando..." : status ? "🟢 Activo" : "🔴 Inactivo"}</p>
+            <button className="button" onClick={handleStart}>🟢 Iniciar Bot</button>
+            <button className="button" onClick={handleStop}>🔴 Detener Bot</button>
           </div>
         )}
         {activeTab === "order" && (
