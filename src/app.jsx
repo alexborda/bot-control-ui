@@ -8,8 +8,18 @@ export function App() {
   const [qty, setQty] = useState(0.01);
   const [orderType, setOrderType] = useState("buy");
   const [price, setPrice] = useState(null);
-  const [activeTab, setActiveTab] = useState("status"); // Estado para cambiar pestañas
+  const [activeTab, setActiveTab] = useState("status");
   const [menuOpen, setMenuOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+
+  // Detectar si es móvil o PC en tiempo real
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   useEffect(() => {
     fetch(`${API_URL}/status`)
@@ -32,7 +42,7 @@ export function App() {
       {/* Navbar con menú para móviles */}
       <nav className="navbar">
         <h1 className="text-2xl font-bold flex items-center gap-2 md:text-3xl">
-          🚀 Trading Bot
+          🚀 Trading Bot {isMobile ? "📱" : "💻"}
         </h1>
         <button className="md:hidden" onClick={() => setMenuOpen(!menuOpen)}>
           ☰
@@ -107,7 +117,7 @@ export function App() {
 
       {/* Footer */}
       <footer className="footer">
-        Creado con ❤️ para optimizar el trading 📈
+        Creado con ❤️ para optimizar el trading 📈 - {isMobile ? "Versión Móvil" : "Versión PC"}
       </footer>
     </div>
   );
