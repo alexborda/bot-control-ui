@@ -73,21 +73,17 @@ useEffect(() => {
       <nav className="navbar">
         <h1 className="navbar-title">Trading Bot</h1>
         <button className="menu-item" onClick={() => setSubmenuOpen(submenuOpen === "tabs" ? null : "tabs")}>☰</button>
-        <div className={`menu ${submenuOpen ? "open" : ""}`}>
-          {submenuOpen === "tabs" && (
-            <div className="submenu">
-              <button className="submenu-item" onClick={() => { setActiveTab("status"); setMenuOpen(false); }}>📊 Estado</button>
-              <button className="submenu-item" onClick={() => { setActiveTab("order"); setMenuOpen(false); }}>🛒 Enviar Orden</button>
-              <button className="submenu-item" onClick={() => { setActiveTab("price"); setMenuOpen(false); }}>💰 Precio</button>
-              <button className="submenu-item" onClick={() => { setActiveTab("theme"); setMenuOpen(false); }}>🌙 Modo</button>
-              <button className="button" onClick={handleStart}>🟢 Iniciar Bot</button>
-              <button className="button" onClick={handleStop}>🔴 Detener Bot</button>
-            </div>
-          )}
         <button className="menu-item" onClick={() => {setActiveTab("status"); setMenuOpen(false); }}>📊 Estado</button>
         <button className="menu-item" onClick={() => {setActiveTab("order"); setMenuOpen(false); }}>🛒 Enviar Orden</button>
         <button className="menu-item" onClick={() => {setActiveTab("price"); setMenuOpen(false); }}>💰 Precio</button>
         <button className="menu-item" onClick={() => {setActiveTab("theme"); setMenuOpen(false); }}>🌙 Modo</button>
+        <div className={`menu ${submenuOpen ? "open" : ""}`}>
+          {submenuOpen === "tabs" && (
+            <div className="submenu">
+              <button className="button" onClick={handleStart}>🟢 Iniciar Bot</button>
+              <button className="button" onClick={handleStop}>🔴 Detener Bot</button>
+            </div>
+          )}
         </div>
       </nav>
 
