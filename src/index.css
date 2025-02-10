@@ -70,3 +70,6 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 }
+.navbar-title {
+  @apply text-2xl font-semibold text-gray-200 dark:text-gray-100;
+}
