@@ -11,6 +11,9 @@ export function App() {
   const [activeTab, setActiveTab] = useState("status");
   const [menuOpen, setMenuOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  const [darkMode, setDarkMode] = useState(
+    localStorage.getItem("theme") === "dark"
+  );
 
   // Detectar si es móvil o PC en tiempo real
   useEffect(() => {
@@ -20,6 +23,17 @@ export function App() {
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
+
+  // Aplicar el modo oscuro desde localStorage
+  useEffect(() => {
+    if (darkMode) {
+      document.documentElement.classList.add("dark");
+      localStorage.setItem("theme", "dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+      localStorage.setItem("theme", "light");
+    }
+  }, [darkMode]);
 
   useEffect(() => {
     fetch(`${API_URL}/status`)
@@ -38,15 +52,20 @@ export function App() {
   }, []);
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-4">
-      {/* Navbar con menú para móviles */}
+    <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-white text-gray-900 dark:bg-gray-900 dark:text-gray-100 transition-all duration-300">
+      {/* Navbar con menú para móviles y botón de modo oscuro */}
       <nav className="navbar">
         <h1 className="text-2xl font-bold flex items-center gap-2 md:text-3xl">
           🚀 Trading Bot {isMobile ? "📱" : "💻"}
         </h1>
-        <button className="md:hidden" onClick={() => setMenuOpen(!menuOpen)}>
-          ☰
-        </button>
+        <div className="flex items-center">
+          <button className="mr-4 bg-gray-200 dark:bg-gray-700 p-2 rounded-full shadow-md" onClick={() => setDarkMode(!darkMode)}>
+            {darkMode ? "🌞" : "🌙"}
+          </button>
+          <button className="md:hidden" onClick={() => setMenuOpen(!menuOpen)}>
+            ☰
+          </button>
+        </div>
         <div className={`space-x-6 text-sm md:text-lg md:flex ${menuOpen ? "block" : "hidden"} absolute top-14 right-4 bg-gray-700 p-4 rounded-lg shadow-lg md:relative md:top-0 md:right-0 md:bg-transparent md:p-0 md:shadow-none`}>
           <a href="/" className="block md:inline-block">Inicio</a>
           <a href="/dashboard" className="block md:inline-block">Panel</a>
@@ -55,7 +74,7 @@ export function App() {
 
       {/* Contenedor principal con pestañas */}
       <div className="container">
-      <h1 className="title">Panel de Control</h1>
+        <h1 className="title">Panel de Control</h1>
 
         {/* Pestañas */}
         <div className="tabs">
