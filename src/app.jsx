@@ -72,7 +72,7 @@ useEffect(() => {
       {/* Navbar */}
       <nav className="navbar">
         <h1 className="navbar-title">Trading Bot</h1>
-        <button className="menu-item" onClick={() => setMenuOpen(menuOpen === "tabs" ? null : "tabs")}>☰</button>
+        <button className="menu-item" onClick={() => setSubmenuOpen(submenuOpen === "tabs" ? null : "tabs")}>☰</button>
         <div className={`menu ${submenuOpen ? "open" : ""}`}>
           {submenuOpen === "tabs" && (
             <div className="submenu">
