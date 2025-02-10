@@ -12,7 +12,7 @@
   @apply flex justify-between items-center w-full p-4 bg-gray-800 text-white rounded-lg shadow-md;
 }
 .navbar-title {
-  @apply text-3xl font-semibold text-gray-200 dark:text-gray-100;
+  @apply text-2xl font-semibold text-gray-200 dark:text-gray-100;
 }
 .menu-button {
   @apply md:hidden text-xl;
