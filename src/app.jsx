@@ -58,9 +58,9 @@ const handleStop = async () => {
         <div className={`menu ${menuOpen ? "open" : ""}`}>
           <button className="menu-item" onClick={() => setSubmenuOpen(submenuOpen === "tabs" ? null : "tabs")}>☰</button>
           {submenuOpen === "tabs" && (
-            <div className="submenu">
+            
               <div className="submenu-item" onClick={() => { setActiveTab("status"); setMenuOpen(false); }}>📊 Estado</div>
-            </div>
+            
           )}
           {submenuOpen === "tabs" && (
             <div className="submenu">
