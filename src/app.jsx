@@ -82,10 +82,10 @@ useEffect(() => {
               <button className="submenu-item" onClick={() => { setActiveTab("theme"); setMenuOpen(false); }}>🌙 Modo</button>
             </div>
           )}
-          <button className="menu-button" onClick={() => setActiveTab("status")}>📊 Estado</button>
-          <button className="menu-button" onClick={() => setActiveTab("order")}>🛒 Enviar Orden</button>
-          <button className="menu-button" onClick={() => setActiveTab("price")}>💰 Precio</button>
-          <button className="menu-button" onClick={() => setActiveTab("theme")}>🌙 Modo</button>
+        <button className="menu-item" onClick={() => {setActiveTab("status"); setMenuOpen(false); }}>📊 Estado</button>
+        <button className="menu-item" onClick={() => {setActiveTab("order"); setMenuOpen(false); }}>🛒 Enviar Orden</button>
+        <button className="menu-item" onClick={() => {setActiveTab("price"); setMenuOpen(false); }}>💰 Precio</button>
+        <button className="menu-item" onClick={() => {setActiveTab("theme"); setMenuOpen(false); }}>🌙 Modo</button>
         </div>
       </nav>
 
