@@ -1,4 +1,5 @@
 import { useState, useEffect } from "preact/hooks";
+import "./app.css"; // Importamos estilos desde app.css
 
 const API_URL = "https://tradingbot.up.railway.app";
 
