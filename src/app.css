@@ -2,22 +2,40 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Mejoras para `.logo` */
-.logo {
-  @apply h-16 p-4 transition-transform transform hover:scale-110;
+/* Navbar */
+.navbar {
+  @apply bg-gray-800 p-4 flex justify-between items-center shadow-lg rounded-lg md:p-5;
 }
 
-/* Sombras en hover */
-.logo:hover {
-  @apply drop-shadow-lg;
+/* Contenedor principal centrado */
+.container {
+  @apply max-w-xl mx-auto p-4 md:p-6 flex flex-col items-center;
 }
 
-/* Estilo para tarjetas */
+/* Pestañas */
+.tabs {
+  @apply flex justify-center gap-2 mt-4;
+}
+
+.tab-button {
+  @apply px-4 py-2 text-sm md:text-lg font-semibold rounded-lg bg-gray-700 text-gray-300 hover:bg-blue-500 transition duration-300;
+}
+
+.tab-button.active {
+  @apply bg-blue-500 text-white;
+}
+
+/* Tarjetas */
 .card {
-  @apply p-8 bg-gray-800 rounded-lg shadow-md;
+  @apply bg-gray-800 p-5 rounded-lg shadow-md mt-4 w-full text-center md:p-6;
 }
 
-/* Links estilizados */
-.read-the-docs {
-  @apply text-gray-400 hover:text-blue-400 transition duration-300;
+/* Inputs */
+.input-field {
+  @apply w-full p-3 text-black rounded-md text-sm bg-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-400 md:text-lg;
+}
+
+/* Footer */
+.footer {
+  @apply mt-8 text-gray-400 text-center text-xs md:text-sm;
 }
