@@ -22,7 +22,7 @@
     @apply block;
   }
   .menu-item {
-    @apply block w-full text-left text-white p-2 hover:bg-gray-600 dark:bg-gray-700 dark:text-gray-200 rounded-lg shadow-md; cursor-pointer;
+    @apply block w-full text-left text-white p-2 hover:bg-gray-600 dark:bg-gray-700 dark:text-gray-200 rounded-lg shadow-md cursor-pointer;
   }
   .submenu {
     @apply bg-gray-800 p-3 rounded-lg mt-2 space-y-2;
