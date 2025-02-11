@@ -12,11 +12,11 @@ export function App() {
   const [price, setPrice] = useState(null);
   const [orders, setOrders] = useState([]);
   const [activeTab, setActiveTab] = useState("status");
-  const [menuOpen, setMenuOpen] = useState(null);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  const [menuOpen, setMenuOpen] = useState(false);
   const [darkMode, setDarkMode] = useState(() => {const savedTheme = localStorage.getItem("theme");
     return savedTheme ? savedTheme === "dark" : window.matchMedia("(prefers-color-scheme: dark)").matches;});
-  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
-
+  
   // 📡 Función para conectar WebSockets con reconexión automática
   const setupWebSocket = (url, onMessage) => {
     let ws = new WebSocket(url);
@@ -50,8 +50,9 @@ export function App() {
 
   // cambia la pantalla si es un mobil
   useEffect(() => {
-    const handleResize = () => setIsMobile(window.innerWidth < 768);
-    handleResize();
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
@@ -75,10 +76,9 @@ export function App() {
       const res = await fetch(`${API_URL}/status`);
       if (!res.ok) throw new Error("Error al obtener el estado");
       const data = await res.json();
-      setStatus(data.status);
+      setStatus(data.status ? "🟢 Activo" : "🔴 Inactivo");
     } catch (error) {
-      console.error("❌ Error obteniendo el estado del bot:", error);
-      setStatus(null);
+      setStatus("⚠️ Error al obtener estado");
     }
   };
 

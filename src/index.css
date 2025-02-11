@@ -1,3 +1,37 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Estilos adicionales personalizados */
+
+/* Navbar */
+.navbar {
+  @apply bg-gray-800 p-4 flex justify-between items-center shadow-lg;
+}
+
+.navbar-title {
+  @apply text-white text-lg font-bold;
+}
+
+.menu-item {
+  @apply bg-blue-500 hover:bg-blue-700 text-white px-4 py-2 rounded transition-all;
+}
+
+/* Menú desplegable en móvil */
+.mobile-menu {
+  @apply bg-gray-700 text-white flex flex-col space-y-2 p-4 md:hidden;
+}
+
+.mobile-menu button {
+  @apply hover:bg-gray-600 p-2 rounded transition-all;
+}
+
+/* Contenedor principal */
+.container {
+  @apply max-w-3xl mx-auto mt-6 bg-white dark:bg-gray-800 shadow-md rounded-lg p-6;
+}
+
+/* Footer */
+.footer {
+  @apply text-center mt-6 text-gray-500 dark:text-gray-400;
+}
