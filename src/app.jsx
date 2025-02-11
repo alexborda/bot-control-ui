@@ -102,7 +102,7 @@ export function App() {
     <div className={`app ${darkMode ? "dark" : ""}`}>
       <header className="header">
         <nav className="navbar">
-          <h1 className="navbar-title">Trading Bot</h1>
+          <h1 className="navbar-title">Trading Bot<p>{isMobile ? "📱" : "💻 M"}</p></h1>
           <div className="hidden md:flex space-x-4">
           <button className="menu-item" onClick={() => setMenuOpen(menuOpen === "tabs" ? null : "tabs")}>☰</button>
           <button className="menu-item" onClick={() => setActiveTab("status")}>📊 Estado</button>
@@ -125,7 +125,6 @@ export function App() {
 
       {/* Contenido dinámico */}
       <div className="container">
-      <p>{isMobile ? "📱 Modo móvil activo" : "💻 Modo escritorio activo"}</p>
         {activeTab === "status" && (
           <div className="card">
             <h2>📊 Estado del Bot</h2>
