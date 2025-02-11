@@ -103,6 +103,7 @@ export function App() {
       <header className="header">
         <nav className="navbar">
           <h1 className="navbar-title">Trading Bot</h1>
+          <div className="hidden md:flex space-x-4">
           <button className="menu-item" onClick={() => setMenuOpen(menuOpen === "tabs" ? null : "tabs")}>☰</button>
           <button className="menu-item" onClick={() => setActiveTab("status")}>📊 Estado</button>
           <button className="menu-item" onClick={() => setActiveTab("order")}>🛒 Enviar Orden</button>
@@ -116,11 +117,15 @@ export function App() {
             </div>
           )}
         </div>
+        </div>
+        {/* Botón hamburguesa en móvil */}
+        <button className="md:hidden text-white text-2xl" onClick={() => setMenuOpen(!menuOpen)}>☰</button>
         </nav>
       </header>
 
       {/* Contenido dinámico */}
       <div className="container">
+      <p>{isMobile ? "📱 Modo móvil activo" : "💻 Modo escritorio activo"}</p>
         {activeTab === "status" && (
           <div className="card">
             <h2>📊 Estado del Bot</h2>
