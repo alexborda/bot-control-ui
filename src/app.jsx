@@ -102,8 +102,7 @@ export function App() {
           <button className="menu-item" onClick={() => setActiveTab("order")}>🛒 Enviar Orden</button>
           <button className="menu-item" onClick={() => setActiveTab("price")}>💰 Precio</button>
           <button className="menu-item" onClick={() => setDarkMode(!darkMode)}>{darkMode ? "🌞 Light" : "🌙 Dark"}</button>
-        </nav>
-        <div className={`menu ${submenuOpen ? "open" : ""}`}>
+          <div className={`menu ${submenuOpen ? "open" : ""}`}>
           {submenuOpen === "tabs" && (
             <div className="submenu">
               <button className="button" onClick={handleStart}>🟢 Start</button>
@@ -111,6 +110,7 @@ export function App() {
             </div>
           )}
         </div>
+        </nav>
       </header>
 
       {/* Contenido dinámico */}
