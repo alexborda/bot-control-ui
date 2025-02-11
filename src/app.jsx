@@ -13,7 +13,7 @@ export function App() {
   const [orders, setOrders] = useState([]);
   const [activeTab, setActiveTab] = useState("status");
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
-  const [menuOpen, setMenuOpen] = useState(null);
+  const [menuOpen, setMenuOpen] = useState(false); // Inicializar como booleano
   const [darkMode, setDarkMode] = useState(() => {
     const savedTheme = localStorage.getItem("theme");
     return savedTheme ? savedTheme === "dark" : window.matchMedia("(prefers-color-scheme: dark)").matches;
@@ -113,17 +113,17 @@ export function App() {
             <button className="menu-item" onClick={() => setDarkMode(!darkMode)}>
               {darkMode ? "🌞 Light" : "🌙 Dark"}
             </button>
-            <button className="menu-item" onClick={() => setMenuOpen(menuOpen === "tabs" ? null : "tabs")}>☰</button>
+            <button className="menu-item" onClick={() => setMenuOpen(!menuOpen)}>☰</button>
           </div>
-          {menuOpen === "tabs" && (
-            <div className="submenu">
-              <button className="button" onClick={handleStart}>🟢 Start</button>
-              <button className="button" onClick={handleStop}>🔴 Stop</button>
-            </div>
-          )}
         </nav>
       </header>
-
+      /* 📌 MENÚ DESPLEGABLE */}
+      {menuOpen && (
+        <div className="submenu">
+          <button className="button" onClick={handleStart}>🟢 Start</button>
+          <button className="button" onClick={handleStop}>🔴 Stop</button>
+        </div>
+      )}
       {/* Contenido dinámico */}
       <div className="container">
         {activeTab === "status" && (
