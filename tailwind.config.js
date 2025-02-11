@@ -5,9 +5,9 @@ export default {
     "./src/**/*.css"  // 📌 Agregar archivos CSS personalizados
   ],
   darkMode: "class",
-    theme: {
+  theme: {
       extend: {},
-    },
-    plugins: [],
-  };
+  },
+  plugins: [],
+};
   
