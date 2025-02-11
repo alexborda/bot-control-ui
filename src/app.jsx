@@ -118,8 +118,7 @@ useEffect(() => {
         {activeTab === "status" && (
           <div className="card">
             <h2>📊 Estado del Bot</h2>
-            <p>{status === null ? "Cargando..." : status ? "🟢 Activo" : "🔴 Inactivo"}</p>
-            
+            <p>{status === null ? "Estado" : (status ? "🟢 Activo" : "🔴 Inactivo")}</p>
           </div>
         )}
         {activeTab === "order" && (
