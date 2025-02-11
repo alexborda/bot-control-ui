@@ -94,6 +94,7 @@ useEffect(() => {
   return (
     <div className="app">
       {/* Navbar */}
+      <header className="header">
       <nav className="navbar">
         <h1 className="navbar-title">Trading Bot</h1>
         <button className="menu-item" onClick={() => setSubmenuOpen(submenuOpen === "tabs" ? null : "tabs")}>☰</button>
@@ -110,6 +111,7 @@ useEffect(() => {
           )}
         </div>
       </nav>
+      </header>
 
       {/* Contenido dinámico */}
       <div className="container">
