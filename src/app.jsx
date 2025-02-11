@@ -70,16 +70,22 @@ export function App() {
 
  // 📊 Obtener el estado del bot cada 5 segundos
  useEffect(() => {
-  const fetchStatus = () => {
-    fetch(`${API_URL}/status`)
-      .then(res => res.json())
-      .then(data => setStatus(data.bot_running))
-      .catch(() => setStatus(null));
+  const fetchStatus = async () => {
+    try {
+      const res = await fetch(`${API_URL}/status`);
+      if (!res.ok) throw new Error("Error al obtener el estado");
+      const data = await res.json();
+      setStatus(data.status);
+    } catch (error) {
+      console.error("❌ Error obteniendo el estado del bot:", error);
+      setStatus(null);
+    }
   };
+
   fetchStatus();
   const interval = setInterval(fetchStatus, 5000);
   return () => clearInterval(interval);
-}, [API_URL]);
+}, []);
 
   useEffect(() => {
     const root = document.documentElement; //Obtiene el <html>
