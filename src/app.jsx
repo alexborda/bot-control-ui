@@ -1,6 +1,8 @@
 import { useState, useEffect } from "preact/hooks";
 
-const API_URL = "https://tradingbot.up.railway.app";
+const API_URL = import.meta.env.VITE_BACKEND_URL;
+const WS_URL_MARKET = API_URL.replace(/^http/, "wss") + "/ws/market"; // 🔒 Asegurar wss://
+const WS_URL_ORDERS = API_URL.replace(/^http/, "wss") + "/ws/orders"; // 🔒 Asegurar wss://
 
 export function App() {
   const [status, setStatus] = useState(null);
@@ -11,9 +13,22 @@ export function App() {
   const [orders, setOrders] = useState([]);
   const [activeTab, setActiveTab] = useState("status");
   const [submenuOpen, setSubmenuOpen] = useState(null);
-  const [darkMode, setDarkMode] = useState(localStorage.getItem("theme") === "dark");
+  const [darkMode, setDarkMode] = useState(() => {const savedTheme = localStorage.getItem("theme");
+    return savedTheme ? savedTheme === "dark" : window.matchMedia("(prefers-color-scheme: dark)").matches;});
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 
+  // 📡 Función para conectar WebSockets con reconexión automática
+  const setupWebSocket = (url, onMessage) => {
+    let ws = new WebSocket(url);
+    ws.onopen = () => console.log(`✅ Conectado a ${url}`);
+    ws.onmessage = (event) => onMessage(JSON.parse(event.data));
+    ws.onerror = (error) => console.error(`❌ Error en WebSocket ${url}`, error);
+    ws.onclose = () => {
+      console.warn(`⚠️ WebSocket cerrado. Reintentando conexión a ${url}...`);
+      setTimeout(() => setupWebSocket(url, onMessage), 3000);
+    };
+    return ws;
+  };
   // Enviar orden
   const sendOrder = async () => {
     const order = {
@@ -32,49 +47,52 @@ export function App() {
     setOrders((prevOrders) => [...prevOrders, result]);
   };
 
-  // WebSocket con reconexión automática
-  const setupWebSocket = (url, onMessage) => {
-    let ws = new WebSocket(url);
-    ws.onmessage = (event) => onMessage(JSON.parse(event.data));
-    ws.onclose = () => setTimeout(() => setupWebSocket(url, onMessage), 3000);
-    return ws;
+  // cambia la pantalla si es un mobil
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  // 🔒 Conectar al WebSocket de Market con `wss://`
+  useEffect(() => {
+    const ws = setupWebSocket(WS_URL_MARKET, (data) => setPrice(data.price));
+    return () => ws.close();
+  }, [WS_URL_MARKET]);
+
+  // 🔒 Conectar al WebSocket de Orders con `wss://`
+  useEffect(() => {
+    const ws = setupWebSocket(WS_URL_ORDERS, (data) => setOrders((prevOrders) => [...prevOrders, data]));
+    return () => ws.close();
+  }, [WS_URL_ORDERS]);
+
+ // 📊 Obtener el estado del bot cada 5 segundos
+ useEffect(() => {
+  const fetchStatus = () => {
+    fetch(`${API_URL}/status`)
+      .then(res => res.json())
+      .then(data => setStatus(data.bot_running))
+      .catch(() => setStatus(null));
   };
+  fetchStatus();
+  const interval = setInterval(fetchStatus, 5000);
+  return () => clearInterval(interval);
+}, [API_URL]);
 
   useEffect(() => {
-    const ws = setupWebSocket("wss://tradingbot.up.railway.app/ws/market", (data) => setPrice(data.price));
-    return () => ws.close();
-  }, []);
-
-  useEffect(() => {
-    const ws = setupWebSocket("wss://tradingbot.up.railway.app/ws/orders", (data) => setOrders((prevOrders) => [...prevOrders, data]));
-    return () => ws.close();
-  }, []);
-
-  useEffect(() => {
-    const fetchStatus = () => {
-      fetch(`${API_URL}/status`)
-        .then(res => res.json())
-        .then(data => setStatus(data.bot_running))
-        .catch(() => setStatus(null));
-    };
-
-    fetchStatus();
-    const interval = setInterval(fetchStatus, 5000);
-    return () => clearInterval(interval);
-  }, []);
-
-  useEffect(() => {
+    const root = document.documentElement; //Obtiene el <html>
     if (darkMode) {
-      document.documentElement.classList.add("dark");
+      root.classList.add("dark");
       localStorage.setItem("theme", "dark");
     } else {
-      document.documentElement.classList.remove("dark");
+      root.classList.remove("dark");
       localStorage.setItem("theme", "light");
     }
   }, [darkMode]);
 
   return (
-    <div className="app">
+    <div className={`app ${darkMode ? "dark" : ""}`}>
       <header className="header">
         <nav className="navbar">
           <h1 className="navbar-title">Trading Bot</h1>
@@ -82,9 +100,7 @@ export function App() {
           <button className="menu-item" onClick={() => setActiveTab("status")}>📊 Estado</button>
           <button className="menu-item" onClick={() => setActiveTab("order")}>🛒 Enviar Orden</button>
           <button className="menu-item" onClick={() => setActiveTab("price")}>💰 Precio</button>
-          <button className="menu-item" onClick={() => setActiveTab("theme")}>
-            {darkMode ? "🌞 Light" : "🌙 Dark"}
-          </button>
+          <button className="menu-item" onClick={() => setDarkMode(!darkMode)}>{darkMode ? "🌞 Light" : "🌙 Dark"}</button>
         </nav>
       </header>
 
@@ -117,14 +133,6 @@ export function App() {
           <div className="card">
             <h2>💰 Precio en Vivo</h2>
             <p>{price ? `$${price}` : "Cargando..."}</p>
-          </div>
-        )}
-        {activeTab === "theme" && (
-          <div className="card">
-            <h2>🌙 Modo Oscuro</h2>
-            <button className="menu-item" onClick={() => setDarkMode(!darkMode)}>
-              {darkMode ? "🌞 Light" : "🌙 Dark"}
-            </button>
           </div>
         )}
       </div>
