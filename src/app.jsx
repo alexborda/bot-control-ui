@@ -16,6 +16,23 @@ export function App() {
   );
 const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 
+const sendOrder = async (side) => {
+  const order = {
+    secret: "supersecreto123",
+    order_type: side,
+    symbol,
+    qty,
+    price,
+  };
+  const response = await fetch(`${API_URL}/trade`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(order),
+  });
+  const result = await response.json();
+  setOrders([...orders, result]);
+};
+
 useEffect(() => {
   const handleResize = () => {
     setIsMobile(window.innerWidth < 768);
@@ -39,13 +56,6 @@ useEffect(() => {
       localStorage.setItem("theme", "light");
     }
   }, [darkMode]);
-// Obtener estado del bot
-  useEffect(() => {
-    fetch(`${API_URL}/status`)
-      .then(res => res.json())
-      .then(data => setStatus(data.status))
-      .catch(() => setStatus(null));
-  }, []);
 // WebSocket para precios en vivo
   useEffect(() => {
     const ws = new WebSocket("wss://tradingbot.up.railway.app/ws/market");
@@ -55,7 +65,15 @@ useEffect(() => {
     };
     return () => ws.close();
   }, []);
-
+// WebSocket para órdenes en vivo
+useEffect(() => {
+  const ws = new WebSocket("wss://tradingbot.up.railway.app/ws/orders");
+  ws.onmessage = (event) => {
+    const data = JSON.parse(event.data);
+    setOrders((prevOrders) => [...prevOrders, data]);
+  };
+  return () => ws.close();
+}, []);
   // Iniciar y detener bot
   const handleStart = async () => {
     await fetch(`${API_URL}/start`, { method: "POST" });
@@ -66,7 +84,13 @@ useEffect(() => {
     await fetch(`${API_URL}/stop`, { method: "POST" });
     alert("Bot detenido");
   };
-
+  // Obtener estado del bot
+  useEffect(() => {
+    fetch(`${API_URL}/status`)
+      .then(res => res.json())
+      .then(data => setStatus(data.status))
+      .catch(() => setStatus(null));
+  }, []);
   return (
     <div className="app">
       {/* Navbar */}
@@ -80,8 +104,8 @@ useEffect(() => {
         <div className={`menu ${submenuOpen ? "open" : ""}`}>
           {submenuOpen === "tabs" && (
             <div className="submenu">
-              <button className="button" onClick={handleStart}>🟢 Iniciar Bot</button>
-              <button className="button" onClick={handleStop}>🔴 Detener Bot</button>
+              <button className="button" onClick={handleStart}>🟢 Start</button>
+              <button className="button" onClick={handleStop}>🔴 Stop</button>
             </div>
           )}
         </div>
@@ -116,7 +140,7 @@ useEffect(() => {
           <div className="card">
             <h2>Modo Oscuro o Claro</h2>
             <button className="menu-item" onClick={() => setDarkMode(!darkMode)}>
-              {darkMode ? "🌞 Modo Claro" : "🌙 Modo Oscuro"}
+              {darkMode ? "🌞 Light" : "🌙 Dark"}
             </button>
           </div>
         )}
