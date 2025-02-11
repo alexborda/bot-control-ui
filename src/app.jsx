@@ -13,11 +13,13 @@ export function App() {
   const [orders, setOrders] = useState([]);
   const [activeTab, setActiveTab] = useState("status");
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
-  const [menuOpen, setMenuOpen] = useState(false);
-  const [darkMode, setDarkMode] = useState(() => {const savedTheme = localStorage.getItem("theme");
-    return savedTheme ? savedTheme === "dark" : window.matchMedia("(prefers-color-scheme: dark)").matches;});
-  
-  // 📡 Función para conectar WebSockets con reconexión automática
+  const [menuOpen, setMenuOpen] = useState(null);
+  const [darkMode, setDarkMode] = useState(() => {
+    const savedTheme = localStorage.getItem("theme");
+    return savedTheme ? savedTheme === "dark" : window.matchMedia("(prefers-color-scheme: dark)").matches;
+  });
+
+  // 📡 WebSocket con reconexión automática
   const setupWebSocket = (url, onMessage) => {
     let ws = new WebSocket(url);
     ws.onopen = () => console.log(`✅ Conectado a ${url}`);
@@ -69,18 +71,19 @@ export function App() {
     return () => ws.close();
   }, [WS_URL_ORDERS]);
 
- // 📊 Obtener el estado del bot cada 5 segundos
- useEffect(() => {
-  const fetchStatus = async () => {
-    try {
-      const res = await fetch(`${API_URL}/status`);
-      if (!res.ok) throw new Error("Error al obtener el estado");
-      const data = await res.json();
-      setStatus(data.status ? "🟢 Activo" : "🔴 Inactivo");
-    } catch (error) {
-      setStatus("⚠️ Error al obtener estado");
-    }
-  };
+  // 📊 Obtener estado del bot
+  useEffect(() => {
+    const fetchStatus = async () => {
+      try {
+        const res = await fetch(`${API_URL}/status`);
+        if (!res.ok) throw new Error("Error al obtener el estado");
+        const data = await res.json();
+        setStatus(data.status); // ✅ Usar directamente el valor booleano
+      } catch (error) {
+        console.error("⚠️ Error al obtener estado:", error);
+        setStatus(null);
+      }
+    };
 
   fetchStatus();
   const interval = setInterval(fetchStatus, 5000);
@@ -104,22 +107,20 @@ export function App() {
         <nav className="navbar">
           <h1 className="navbar-title">Trading Bot {isMobile ? "📱" : "💻"}</h1>
           <div className="hidden md:flex space-x-4">
-          <button className="menu-item" onClick={() => setMenuOpen(menuOpen === "tabs" ? null : "tabs")}>☰</button>
-          <button className="menu-item" onClick={() => setActiveTab("status")}>📊 Estado</button>
-          <button className="menu-item" onClick={() => setActiveTab("order")}>🛒 Enviar Orden</button>
-          <button className="menu-item" onClick={() => setActiveTab("price")}>💰 Precio</button>
-          <button className="menu-item" onClick={() => setDarkMode(!darkMode)}>{darkMode ? "🌞 Light" : "🌙 Dark"}</button>
-          <div className={`menu ${menuOpen ? "open" : ""}`}>
+            <button className="menu-item" onClick={() => setActiveTab("status")}>📊 Estado</button>
+            <button className="menu-item" onClick={() => setActiveTab("order")}>🛒 Enviar Orden</button>
+            <button className="menu-item" onClick={() => setActiveTab("price")}>💰 Precio</button>
+            <button className="menu-item" onClick={() => setDarkMode(!darkMode)}>
+              {darkMode ? "🌞 Light" : "🌙 Dark"}
+            </button>
+            <button className="menu-item" onClick={() => setMenuOpen(menuOpen === "tabs" ? null : "tabs")}>☰</button>
+          </div>
           {menuOpen === "tabs" && (
             <div className="submenu">
               <button className="button" onClick={handleStart}>🟢 Start</button>
               <button className="button" onClick={handleStop}>🔴 Stop</button>
             </div>
           )}
-        </div>
-        </div>
-        {/* Botón hamburguesa en móvil */}
-        <button className="md:hidden text-white text-2xl" onClick={() => setMenuOpen(!menuOpen)}>☰</button>
         </nav>
       </header>
 
