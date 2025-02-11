@@ -33,6 +33,7 @@ export function App() {
   const sendOrder = async () => {
     const order = {
       secret: import.meta.env.VITE_API_SECRET,
+      
       order_type: orderType,
       symbol,
       qty,
