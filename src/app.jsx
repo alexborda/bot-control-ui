@@ -8,45 +8,61 @@ export function App() {
   const [qty, setQty] = useState(0.01);
   const [orderType, setOrderType] = useState("buy");
   const [price, setPrice] = useState(null);
+  const [orders, setOrders] = useState([]);
   const [activeTab, setActiveTab] = useState("status");
-  const [menuOpen, setMenuOpen] = useState(false);
   const [submenuOpen, setSubmenuOpen] = useState(null);
-  const [darkMode, setDarkMode] = useState(
-    localStorage.getItem("theme") === "dark"
-  );
-const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  const [darkMode, setDarkMode] = useState(localStorage.getItem("theme") === "dark");
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 
-const sendOrder = async (side) => {
-  const order = {
-    secret: "supersecreto123",
-    order_type: side,
-    symbol,
-    qty,
-    price,
-  };
-  const response = await fetch(`${API_URL}/trade`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(order),
-  });
-  const result = await response.json();
-  setOrders([...orders, result]);
-};
-
-useEffect(() => {
-  const handleResize = () => {
-    setIsMobile(window.innerWidth < 768);
+  // Enviar orden
+  const sendOrder = async () => {
+    const order = {
+      secret: import.meta.env.VITE_API_SECRET,
+      order_type: orderType,
+      symbol,
+      qty,
+      price,
+    };
+    const response = await fetch(`${API_URL}/trade`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(order),
+    });
+    const result = await response.json();
+    setOrders((prevOrders) => [...prevOrders, result]);
   };
 
-  // Ejecutar la detección en el primer render
-  handleResize();
+  // WebSocket con reconexión automática
+  const setupWebSocket = (url, onMessage) => {
+    let ws = new WebSocket(url);
+    ws.onmessage = (event) => onMessage(JSON.parse(event.data));
+    ws.onclose = () => setTimeout(() => setupWebSocket(url, onMessage), 3000);
+    return ws;
+  };
 
-  // Agregar event listener para cambios en el tamaño de pantalla
-  window.addEventListener("resize", handleResize);
+  useEffect(() => {
+    const ws = setupWebSocket("wss://tradingbot.up.railway.app/ws/market", (data) => setPrice(data.price));
+    return () => ws.close();
+  }, []);
 
-  // Limpiar el event listener cuando el componente se desmonta
-  return () => window.removeEventListener("resize", handleResize);
-}, []);
+  useEffect(() => {
+    const ws = setupWebSocket("wss://tradingbot.up.railway.app/ws/orders", (data) => setOrders((prevOrders) => [...prevOrders, data]));
+    return () => ws.close();
+  }, []);
+
+  useEffect(() => {
+    const fetchStatus = () => {
+      fetch(`${API_URL}/status`)
+        .then(res => res.json())
+        .then(data => setStatus(data.bot_running))
+        .catch(() => setStatus(null));
+    };
+
+    fetchStatus();
+    const interval = setInterval(fetchStatus, 5000);
+    return () => clearInterval(interval);
+  }, []);
+
   useEffect(() => {
     if (darkMode) {
       document.documentElement.classList.add("dark");
@@ -56,61 +72,20 @@ useEffect(() => {
       localStorage.setItem("theme", "light");
     }
   }, [darkMode]);
-// WebSocket para precios en vivo
-  useEffect(() => {
-    const ws = new WebSocket("wss://tradingbot.up.railway.app/ws/market");
-    ws.onmessage = (event) => {
-      const data = JSON.parse(event.data);
-      setPrice(data.price);
-    };
-    return () => ws.close();
-  }, []);
-// WebSocket para órdenes en vivo
-useEffect(() => {
-  const ws = new WebSocket("wss://tradingbot.up.railway.app/ws/orders");
-  ws.onmessage = (event) => {
-    const data = JSON.parse(event.data);
-    setOrders((prevOrders) => [...prevOrders, data]);
-  };
-  return () => ws.close();
-}, []);
-  // Iniciar y detener bot
-  const handleStart = async () => {
-    await fetch(`${API_URL}/start`, { method: "POST" });
-    alert("Bot iniciado");
-  };
 
-  const handleStop = async () => {
-    await fetch(`${API_URL}/stop`, { method: "POST" });
-    alert("Bot detenido");
-  };
-  // Obtener estado del bot
-  useEffect(() => {
-    fetch(`${API_URL}/status`)
-      .then(res => res.json())
-      .then(data => setStatus(data.status))
-      .catch(() => setStatus(null));
-  }, []);
   return (
     <div className="app">
-      {/* Navbar */}
       <header className="header">
-      <nav className="navbar">
-        <h1 className="navbar-title">Trading Bot</h1>
-        <button className="menu-item" onClick={() => setSubmenuOpen(submenuOpen === "tabs" ? null : "tabs")}>☰</button>
-        <button className="menu-item" onClick={() => {setActiveTab("status"); setMenuOpen(false); }}>📊 Estado</button>
-        <button className="menu-item" onClick={() => {setActiveTab("order"); setMenuOpen(false); }}>🛒 Enviar Orden</button>
-        <button className="menu-item" onClick={() => {setActiveTab("price"); setMenuOpen(false); }}>💰 Precio</button>
-        <button className="menu-item" onClick={() => {setActiveTab("theme"); setMenuOpen(false); }}>🌙 Modo</button>
-        <div className={`menu ${submenuOpen ? "open" : ""}`}>
-          {submenuOpen === "tabs" && (
-            <div className="submenu">
-              <button className="button" onClick={handleStart}>🟢 Start</button>
-              <button className="button" onClick={handleStop}>🔴 Stop</button>
-            </div>
-          )}
-        </div>
-      </nav>
+        <nav className="navbar">
+          <h1 className="navbar-title">Trading Bot</h1>
+          <button className="menu-item" onClick={() => setSubmenuOpen(submenuOpen === "tabs" ? null : "tabs")}>☰</button>
+          <button className="menu-item" onClick={() => setActiveTab("status")}>📊 Estado</button>
+          <button className="menu-item" onClick={() => setActiveTab("order")}>🛒 Enviar Orden</button>
+          <button className="menu-item" onClick={() => setActiveTab("price")}>💰 Precio</button>
+          <button className="menu-item" onClick={() => setActiveTab("theme")}>
+            {darkMode ? "🌞 Light" : "🌙 Dark"}
+          </button>
+        </nav>
       </header>
 
       {/* Contenido dinámico */}
@@ -118,16 +93,23 @@ useEffect(() => {
         {activeTab === "status" && (
           <div className="card">
             <h2>📊 Estado del Bot</h2>
-            <p>{status === null ? "Estado" : (status ? "🟢 Activo" : "🔴 Inactivo")}</p>
+            <p>{status === null ? "Cargando..." : status ? "🟢 Activo" : "🔴 Inactivo"}</p>
           </div>
         )}
         {activeTab === "order" && (
           <div className="card">
             <h2>🛒 Enviar Orden</h2>
-            <form>
+            <form onSubmit={(e) => { e.preventDefault(); sendOrder(); }}>
               <label>Símbolo:</label>
               <input type="text" value={symbol} onChange={(e) => setSymbol(e.target.value)} className="input-field" />
-              <button className="button">📩 Enviar Orden</button>
+              <label>Cantidad:</label>
+              <input type="number" value={qty} onChange={(e) => setQty(Number(e.target.value))} className="input-field" />
+              <label>Tipo de Orden:</label>
+              <select value={orderType} onChange={(e) => setOrderType(e.target.value)} className="input-field">
+                <option value="buy">Comprar</option>
+                <option value="sell">Vender</option>
+              </select>
+              <button type="submit" className="button">📩 Enviar Orden</button>
             </form>
           </div>
         )}
@@ -139,7 +121,7 @@ useEffect(() => {
         )}
         {activeTab === "theme" && (
           <div className="card">
-            <h2>Modo Oscuro o Claro</h2>
+            <h2>🌙 Modo Oscuro</h2>
             <button className="menu-item" onClick={() => setDarkMode(!darkMode)}>
               {darkMode ? "🌞 Light" : "🌙 Dark"}
             </button>
@@ -147,7 +129,6 @@ useEffect(() => {
         )}
       </div>
 
-      {/* Footer */}
       <footer className="footer">Creado con ❤️ para optimizar el trading 📈</footer>
     </div>
   );
