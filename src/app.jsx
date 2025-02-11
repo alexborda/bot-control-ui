@@ -12,7 +12,7 @@ export function App() {
   const [price, setPrice] = useState(null);
   const [orders, setOrders] = useState([]);
   const [activeTab, setActiveTab] = useState("status");
-  const [submenuOpen, setSubmenuOpen] = useState(null);
+  const [menuOpen, setMenuOpen] = useState(null);
   const [darkMode, setDarkMode] = useState(() => {const savedTheme = localStorage.getItem("theme");
     return savedTheme ? savedTheme === "dark" : window.matchMedia("(prefers-color-scheme: dark)").matches;});
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
@@ -103,7 +103,7 @@ export function App() {
       <header className="header">
         <nav className="navbar">
           <h1 className="navbar-title">Trading Bot</h1>
-          <button className="menu-item" onClick={() => setmenuOpen(menuOpen === "tabs" ? null : "tabs")}>☰</button>
+          <button className="menu-item" onClick={() => setMenuOpen(menuOpen === "tabs" ? null : "tabs")}>☰</button>
           <button className="menu-item" onClick={() => setActiveTab("status")}>📊 Estado</button>
           <button className="menu-item" onClick={() => setActiveTab("order")}>🛒 Enviar Orden</button>
           <button className="menu-item" onClick={() => setActiveTab("price")}>💰 Precio</button>
