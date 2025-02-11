@@ -103,13 +103,13 @@ export function App() {
       <header className="header">
         <nav className="navbar">
           <h1 className="navbar-title">Trading Bot</h1>
-          <button className="menu-item" onClick={() => setSubmenuOpen(submenuOpen === "tabs" ? null : "tabs")}>☰</button>
+          <button className="menu-item" onClick={() => setmenuOpen(menuOpen === "tabs" ? null : "tabs")}>☰</button>
           <button className="menu-item" onClick={() => setActiveTab("status")}>📊 Estado</button>
           <button className="menu-item" onClick={() => setActiveTab("order")}>🛒 Enviar Orden</button>
           <button className="menu-item" onClick={() => setActiveTab("price")}>💰 Precio</button>
           <button className="menu-item" onClick={() => setDarkMode(!darkMode)}>{darkMode ? "🌞 Light" : "🌙 Dark"}</button>
           <div className={`menu ${submenuOpen ? "open" : ""}`}>
-          {submenuOpen === "tabs" && (
+          {menuOpen === "tabs" && (
             <div className="submenu">
               <button className="button" onClick={handleStart}>🟢 Start</button>
               <button className="button" onClick={handleStop}>🔴 Stop</button>
