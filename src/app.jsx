@@ -33,7 +33,7 @@ export function App() {
   const sendOrder = async () => {
     const order = {
       secret: import.meta.env.VITE_API_SECRET,
-      
+
       order_type: orderType,
       symbol,
       qty,
@@ -103,6 +103,14 @@ export function App() {
           <button className="menu-item" onClick={() => setActiveTab("price")}>💰 Precio</button>
           <button className="menu-item" onClick={() => setDarkMode(!darkMode)}>{darkMode ? "🌞 Light" : "🌙 Dark"}</button>
         </nav>
+        <div className={`menu ${submenuOpen ? "open" : ""}`}>
+          {submenuOpen === "tabs" && (
+            <div className="submenu">
+              <button className="button" onClick={handleStart}>🟢 Start</button>
+              <button className="button" onClick={handleStop}>🔴 Stop</button>
+            </div>
+          )}
+        </div>
       </header>
 
       {/* Contenido dinámico */}
