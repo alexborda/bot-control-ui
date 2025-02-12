@@ -8,7 +8,6 @@ export default defineConfig({
     outDir: "dist", // Se asegura de que el build se guarde correctamente
   },
   server: {
-    port: 3000, // Usa un puerto estándar
     host: true,
   },
 })
