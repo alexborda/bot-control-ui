@@ -6,6 +6,7 @@ export default defineConfig({
   plugins: [preact()],
   base: "./", // Asegura rutas correctas en producción
   server: {
+    port: 3000, // Usa 3000 por defecto si Railway no define un puerto
     host: true,
   },
   build: {
