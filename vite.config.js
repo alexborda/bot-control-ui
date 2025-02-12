@@ -9,6 +9,6 @@ export default defineConfig({
   },
   server: {
     host: true,
-    port: process.env.PORT || 3000, // Usa el puerto de Railway o 3000 por defecto
+    port: process.env.PORT || 8080, // Usa el puerto de Railway o 3000 por defecto
   },
 });
