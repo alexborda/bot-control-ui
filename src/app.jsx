@@ -64,10 +64,7 @@ export function App() {
 useEffect(() => {
   const ws = setupWebSocket(WS_URL_MARKET, (data) => {
     if (data.topic === "tickers.BTCUSDT" && data.data) {
-      setPrice((prev) => {
-        console.log("📡 Nuevo precio:", data.data.lastPrice);
-        return data.data.lastPrice;
-      });
+      setPrice(data.data.lastPrice); // ✅ Actualiza el precio en la UI
     }
   });
 
