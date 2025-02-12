@@ -21,42 +21,34 @@ export function App() {
   });
 
   // 📡 WebSocket con reconexión automática (con límite de intentos)
-const setupWebSocket = (url, onMessage, retries = 5) => {
-  if (retries <= 0) {
-    console.error("❌ Se agotaron los intentos de reconexión a WebSocket:", url);
-    return;
-  }
-
-  let ws = new WebSocket(url);
-
-  ws.onopen = () => console.log(`✅ Conectado a ${url}`);
-
-  ws.onmessage = (event) => {
-    try {
-      const data = JSON.parse(event.data);
-      console.log("📡 Recibido precio en vivo:", data);
-      
-      // Verificar que el precio está en los datos
-      if (data && data.price !== undefined) {
-        onMessage(data);
-      } else {
-        console.warn("⚠️ Formato inesperado de datos en WebSocket:", data);
+  const setupWebSocket = (url, onMessage, retries = 5) => {
+    if (retries <= 0) return;
+    let ws = new WebSocket(url);
+  
+    ws.onopen = () => console.log(`✅ Conectado a ${url}`);
+  
+    ws.onmessage = (event) => {
+      console.log("📡 Datos recibidos desde WS:", event.data); // <-- Verifica el contenido
+      try {
+        const data = JSON.parse(event.data);
+        console.log("📊 Procesando precio recibido:", data); // <-- Asegura que `data.price` existe
+        if (data.price) onMessage(data);
+        else console.warn("⚠️ No se encontró `price` en los datos recibidos", data);
+      } catch (error) {
+        console.error("❌ Error al procesar mensaje WS:", error);
       }
-    } catch (error) {
-      console.error("❌ Error al procesar mensaje WebSocket:", error);
-    }
+    };
+  
+    ws.onerror = (error) => console.error(`❌ Error en WebSocket ${url}`, error);
+  
+    ws.onclose = () => {
+      console.warn(`⚠️ WebSocket cerrado. Reintentando conexión (${retries - 1} intentos restantes)...`);
+      setTimeout(() => setupWebSocket(url, onMessage, retries - 1), 3000);
+    };
+  
+    return ws;
   };
-
-  ws.onerror = (error) => console.error(`❌ Error en WebSocket ${url}:`, error);
-
-  ws.onclose = () => {
-    console.warn(`⚠️ WebSocket cerrado. Reintentando conexión (${retries - 1} intentos restantes)...`);
-    setTimeout(() => setupWebSocket(url, onMessage, retries - 1), 3000);
-  };
-
-  return ws;
-};
-
+  
 // 🔒 Conectar al WebSocket de Market con `wss://`
 useEffect(() => {
   console.log("🌐 Conectando a WebSocket de mercado:", WS_URL_MARKET);
