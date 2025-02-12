@@ -77,8 +77,10 @@ export function App() {
   const handleStart = async () => {
     try {
       const res = await fetch(`${API_URL}/start`, { method: "POST" });
+      if (!res.ok) throw new Error("Error al iniciar el bot");
       const data = await res.json();
       console.log("✅ Bot iniciado:", data);
+      fetchStatus(); // ✅ Consulta el estado nuevamente
       setStatus(true);
     } catch (error) {
       console.error("❌ Error al iniciar el bot:", error);
@@ -88,8 +90,10 @@ export function App() {
   const handleStop = async () => {
     try {
       const res = await fetch(`${API_URL}/stop`, { method: "POST" });
+      if (!res.ok) throw new Error("Error al detener el bot");
       const data = await res.json();
       console.log("🛑 Bot detenido:", data);
+      fetchStatus(); // ✅ Consulta el estado nuevamente
       setStatus(false);
     } catch (error) {
       console.error("❌ Error al detener el bot:", error);
