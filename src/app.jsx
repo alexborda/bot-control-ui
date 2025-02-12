@@ -62,7 +62,7 @@ const fetchStatus = async () => {
     const res = await fetch(`${API_URL}/status?t=${Date.now()}`); // ⚡ Evita caché con un timestamp
     if (!res.ok) throw new Error("Error al obtener el estado");
     const data = await res.json();
-    console.log("📡 Estado actualizado:", data);
+    console.log("📡 Estado actualizado:", data.status);
     setStatus(data.status);
   } catch (error) {
     console.error("⚠️ Error al obtener estado:", error);
@@ -158,8 +158,8 @@ const handleStop = async () => {
       {/* 📌 MENÚ DESPLEGABLE */}
       {menuOpen && (
         <div className="submenu">
-          <button onClick={handleStart} disabled={status === true} className="button">🟢 Start</button>
-          <button onClick={handleStop} disabled={status === false} className="button">🔴 Stop</button>
+          <button onClick={handleStart} disabled={status} className="button">🟢 Start</button>
+          <button onClick={handleStop} disabled={!status} className="button">🔴 Stop</button>
         </div>
       )}
 
