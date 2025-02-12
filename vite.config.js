@@ -5,7 +5,7 @@ export default defineConfig({
   plugins: [preact()],
   base: "./", // Evita problemas de rutas en producción
   server: {
-    port: process.env.PORT || 3000, // Usa Railway si está disponible
+    port: 8080,
     host: true,
   },
 });
