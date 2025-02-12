@@ -55,50 +55,50 @@ export function App() {
     }
   };
 
-  // 📊 Obtener estado del bot
-  useEffect(() => {
-    const fetchStatus = async () => {
-      try {
-        const res = await fetch(`${API_URL}/status`);
-        if (!res.ok) throw new Error("Error al obtener el estado");
-        const data = await res.json();
-        setStatus(data.status);
-      } catch (error) {
-        console.error("⚠️ Error al obtener estado:", error);
-        setStatus(null);
-      }
-    };
+// 📊 Obtener estado del bot
+const fetchStatus = useCallback(async () => {
+  try {
+    const res = await fetch(`${API_URL}/status`);
+    if (!res.ok) throw new Error("Error al obtener el estado");
+    const data = await res.json();
+    setStatus(data.status); // ✅ Se asegura de usar el estado real del backend
+  } catch (error) {
+    console.error("⚠️ Error al obtener estado:", error);
+    setStatus(null);
+  }
+}, [API_URL]);
 
-    fetchStatus();
-    const interval = setInterval(fetchStatus, 5000);
-    return () => clearInterval(interval);
-  }, []);
-  // 📌 Manejar inicio del bot
-  const handleStart = async () => {
-    try {
-      const res = await fetch(`${API_URL}/start`, { method: "POST" });
-      if (!res.ok) throw new Error("Error al iniciar el bot");
-      const data = await res.json();
-      console.log("✅ Bot iniciado:", data);
-      fetchStatus(); // ✅ Consulta el estado nuevamente
-      setStatus(true);
-    } catch (error) {
-      console.error("❌ Error al iniciar el bot:", error);
-    }
-  };
-  //📌 Manejar detención del bot
-  const handleStop = async () => {
-    try {
-      const res = await fetch(`${API_URL}/stop`, { method: "POST" });
-      if (!res.ok) throw new Error("Error al detener el bot");
-      const data = await res.json();
-      console.log("🛑 Bot detenido:", data);
-      fetchStatus(); // ✅ Consulta el estado nuevamente
-      setStatus(false);
-    } catch (error) {
-      console.error("❌ Error al detener el bot:", error);
-    }
-  };
+useEffect(() => {
+  fetchStatus();
+  const interval = setInterval(fetchStatus, 5000);
+  return () => clearInterval(interval);
+}, [fetchStatus]);
+
+// 📌 Manejar inicio del bot
+const handleStart = async () => {
+  try {
+    const res = await fetch(`${API_URL}/start`, { method: "POST" });
+    if (!res.ok) throw new Error("Error al iniciar el bot");
+    const data = await res.json();
+    console.log("✅ Bot iniciado:", data);
+    fetchStatus(); // ✅ Ahora se puede llamar sin errores
+  } catch (error) {
+    console.error("❌ Error al iniciar el bot:", error);
+  }
+};
+
+// 📌 Manejar detención del bot
+const handleStop = async () => {
+  try {
+    const res = await fetch(`${API_URL}/stop`, { method: "POST" });
+    if (!res.ok) throw new Error("Error al detener el bot");
+    const data = await res.json();
+    console.log("🛑 Bot detenido:", data);
+    fetchStatus(); // ✅ Ahora se puede llamar sin errores
+  } catch (error) {
+    console.error("❌ Error al detener el bot:", error);
+  }
+};
   // 🔒 Conectar a WebSocket de Market con `wss://`
   useEffect(() => {
     const ws = setupWebSocket(WS_URL_MARKET, (data) => setPrice(data.price));
