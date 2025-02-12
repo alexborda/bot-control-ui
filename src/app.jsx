@@ -57,23 +57,25 @@ export function App() {
   };
 
 // 📊 Obtener estado del bot
-const fetchStatus = useCallback(async () => {
+const fetchStatus = async () => {
   try {
-    const res = await fetch(`${API_URL}/status`);
+    const res = await fetch(`${API_URL}/status?t=${Date.now()}`); // ⚡ Evita caché con un timestamp
     if (!res.ok) throw new Error("Error al obtener el estado");
     const data = await res.json();
-    setStatus(data.status); // ✅ Se asegura de usar el estado real del backend
+    console.log("📡 Estado actualizado:", data);
+    setStatus(data.status);
   } catch (error) {
     console.error("⚠️ Error al obtener estado:", error);
     setStatus(null);
   }
-}, [API_URL]);
+};
 
 useEffect(() => {
   fetchStatus();
   const interval = setInterval(fetchStatus, 5000);
-  return () => clearInterval(interval);
-}, [fetchStatus]);
+
+  return () => clearInterval(interval); // ✅ Limpieza de intervalos
+}, []);
 
 // 📌 Manejar inicio del bot
 const handleStart = async () => {
@@ -82,7 +84,8 @@ const handleStart = async () => {
     if (!res.ok) throw new Error("Error al iniciar el bot");
     const data = await res.json();
     console.log("✅ Bot iniciado:", data);
-    fetchStatus(); // ✅ Ahora se puede llamar sin errores
+
+    await fetchStatus(); // ✅ Forzar actualización inmediata
   } catch (error) {
     console.error("❌ Error al iniciar el bot:", error);
   }
@@ -95,11 +98,13 @@ const handleStop = async () => {
     if (!res.ok) throw new Error("Error al detener el bot");
     const data = await res.json();
     console.log("🛑 Bot detenido:", data);
-    fetchStatus(); // ✅ Ahora se puede llamar sin errores
+
+    await fetchStatus(); // ✅ Forzar actualización inmediata
   } catch (error) {
     console.error("❌ Error al detener el bot:", error);
   }
 };
+
   // 🔒 Conectar a WebSocket de Market con `wss://`
   useEffect(() => {
     const ws = setupWebSocket(WS_URL_MARKET, (data) => setPrice(data.price));
