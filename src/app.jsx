@@ -1,4 +1,4 @@
-import { useState, useEffect } from "preact/hooks";
+import { useState, useEffect, useCallback} from "preact/hooks";
 
 const API_URL = import.meta.env.VITE_BACKEND_URL;
 const WS_URL_MARKET = API_URL.replace(/^http/, "wss") + "/ws/market"; // 🔒 Asegurar wss://
@@ -153,9 +153,7 @@ const handleStop = async () => {
       {menuOpen && (
         <div className="submenu">
           <button onClick={handleStart} disabled={status === true} className="button">🟢 Start</button>
-
-<button onClick={handleStop} disabled={status === false} className="button">🔴 Stop</button>
-
+          <button onClick={handleStop} disabled={status === false} className="button">🔴 Stop</button>
         </div>
       )}
 
