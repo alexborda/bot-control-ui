@@ -73,7 +73,28 @@ export function App() {
     const interval = setInterval(fetchStatus, 5000);
     return () => clearInterval(interval);
   }, []);
-
+  // 📌 Manejar inicio del bot
+  const handleStart = async () => {
+    try {
+      const res = await fetch(`${API_URL}/start`, { method: "POST" });
+      const data = await res.json();
+      console.log("✅ Bot iniciado:", data);
+      setStatus(true);
+    } catch (error) {
+      console.error("❌ Error al iniciar el bot:", error);
+    }
+  };
+  //📌 Manejar detención del bot
+  const handleStop = async () => {
+    try {
+      const res = await fetch(`${API_URL}/stop`, { method: "POST" });
+      const data = await res.json();
+      console.log("🛑 Bot detenido:", data);
+      setStatus(false);
+    } catch (error) {
+      console.error("❌ Error al detener el bot:", error);
+    }
+  };
   // 🔒 Conectar a WebSocket de Market con `wss://`
   useEffect(() => {
     const ws = setupWebSocket(WS_URL_MARKET, (data) => setPrice(data.price));
@@ -127,8 +148,8 @@ export function App() {
       {/* 📌 MENÚ DESPLEGABLE */}
       {menuOpen && (
         <div className="submenu">
-          <button className="button" onClick={() => fetch(`${API_URL}/start`, { method: "POST" })}>🟢 Start</button>
-          <button className="button" onClick={() => fetch(`${API_URL}/stop`, { method: "POST" })}>🔴 Stop</button>
+          <button className="button" onClick={handleStart} disabled={status}>🟢 Start</button>
+          <button className="button" onClick={handleStop} disabled={!status}>🔴 Stop</button>
         </div>
       )}
 
