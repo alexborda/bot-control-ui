@@ -25,7 +25,10 @@ export function App() {
     if (retries <= 0) return;
     let ws = new WebSocket(url);
     ws.onopen = () => console.log(`✅ Conectado a ${url}`);
-    ws.onmessage = (event) => onMessage(JSON.parse(event.data));
+    ws.onmessage = (event) => {onMessage(JSON.parse(event.data));
+      console.log("📡 Recibido precio en vivo:", data);  // <--- Agregado para debug
+      onMessage(data);
+    };  
     ws.onerror = (error) => console.error(`❌ Error en WebSocket ${url}`, error);
     ws.onclose = () => {
       console.warn(`⚠️ WebSocket cerrado. Reintentando conexión (${retries - 1} intentos restantes)...`);
@@ -146,8 +149,8 @@ const handleStop = async () => {
           <div className="hidden md:flex space-x-4">
             <button className="menu-item" onClick={() => setMenuOpen(!menuOpen)}>☰</button>
             <button className="menu-item" onClick={() => setActiveTab("status")}>📊 Estado</button>
-            <button className="menu-item" onClick={() => setActiveTab("order")}>🛒 Enviar Orden</button>
-            <button className="menu-item" onClick={() => setActiveTab("price")}>💰 Precio</button>
+            <button className="menu-item" onClick={() => setActiveTab("order")}>🛒 Ordenes</button>
+            <button className="menu-item" onClick={() => setActiveTab("price")}>💰 Precios</button>
             <button className="menu-item" onClick={() => setDarkMode(!darkMode)}>
               {darkMode ? "🌞 Light" : "🌙 Dark"}
             </button>
