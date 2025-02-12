@@ -21,21 +21,55 @@ export function App() {
   });
 
   // 📡 WebSocket con reconexión automática (con límite de intentos)
-  const setupWebSocket = (url, onMessage, retries = 5) => {
-    if (retries <= 0) return;
-    let ws = new WebSocket(url);
-    ws.onopen = () => console.log(`✅ Conectado a ${url}`);
-    ws.onmessage = (event) => {onMessage(JSON.parse(event.data));
-      console.log("📡 Recibido precio en vivo:", data);  // <--- Agregado para debug
-      onMessage(data);
-    };  
-    ws.onerror = (error) => console.error(`❌ Error en WebSocket ${url}`, error);
-    ws.onclose = () => {
-      console.warn(`⚠️ WebSocket cerrado. Reintentando conexión (${retries - 1} intentos restantes)...`);
-      setTimeout(() => setupWebSocket(url, onMessage, retries - 1), 3000);
-    };
-    return ws;
+const setupWebSocket = (url, onMessage, retries = 5) => {
+  if (retries <= 0) {
+    console.error("❌ Se agotaron los intentos de reconexión a WebSocket:", url);
+    return;
+  }
+
+  let ws = new WebSocket(url);
+
+  ws.onopen = () => console.log(`✅ Conectado a ${url}`);
+
+  ws.onmessage = (event) => {
+    try {
+      const data = JSON.parse(event.data);
+      console.log("📡 Recibido precio en vivo:", data);
+      
+      // Verificar que el precio está en los datos
+      if (data && data.price !== undefined) {
+        onMessage(data);
+      } else {
+        console.warn("⚠️ Formato inesperado de datos en WebSocket:", data);
+      }
+    } catch (error) {
+      console.error("❌ Error al procesar mensaje WebSocket:", error);
+    }
   };
+
+  ws.onerror = (error) => console.error(`❌ Error en WebSocket ${url}:`, error);
+
+  ws.onclose = () => {
+    console.warn(`⚠️ WebSocket cerrado. Reintentando conexión (${retries - 1} intentos restantes)...`);
+    setTimeout(() => setupWebSocket(url, onMessage, retries - 1), 3000);
+  };
+
+  return ws;
+};
+
+// 🔒 Conectar al WebSocket de Market con `wss://`
+useEffect(() => {
+  console.log("🌐 Conectando a WebSocket de mercado:", WS_URL_MARKET);
+  const ws = setupWebSocket(WS_URL_MARKET, (data) => setPrice(data.price));
+  return () => ws?.close();
+}, []);
+
+// 🔒 Conectar al WebSocket de Orders con `wss://`
+useEffect(() => {
+  console.log("🌐 Conectando a WebSocket de órdenes:", WS_URL_ORDERS);
+  const ws = setupWebSocket(WS_URL_ORDERS, (data) => setOrders((prevOrders) => [...prevOrders, data]));
+  return () => ws?.close();
+}, []);
 
   // 📩 Enviar orden
   const sendOrder = async () => {
@@ -107,18 +141,6 @@ const handleStop = async () => {
     console.error("❌ Error al detener el bot:", error);
   }
 };
-
-  // 🔒 Conectar a WebSocket de Market con `wss://`
-  useEffect(() => {
-    const ws = setupWebSocket(WS_URL_MARKET, (data) => setPrice(data.price));
-    return () => ws?.close();
-  }, []);
-
-  // 🔒 Conectar a WebSocket de Orders con `wss://`
-  useEffect(() => {
-    const ws = setupWebSocket(WS_URL_ORDERS, (data) => setOrders((prevOrders) => [...prevOrders, data]));
-    return () => ws?.close();
-  }, []);
 
   // 🌐 Detectar si es móvil
   useEffect(() => {
