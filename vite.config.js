@@ -3,9 +3,12 @@ import preact from '@preact/preset-vite';
 
 export default defineConfig({
   plugins: [preact()],
-  base: "./",  // Asegura rutas correctas en producción
+  base: "./", // Evita problemas de rutas en producción
+  build: {
+    outDir: "dist", // Asegura que la build se guarde en "dist"
+  },
   server: {
-    port: 3000,
-    host: true
-  }
+    port: process.env.PORT || 3000, // Usa Railway si está disponible
+    host: true,
+  },
 });
