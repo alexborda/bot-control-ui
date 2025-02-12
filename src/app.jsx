@@ -51,8 +51,14 @@ export function App() {
   
 // 🔒 Conectar al WebSocket de Market con `wss://`
 useEffect(() => {
+  const ws = setupWebSocket(WS_URL_MARKET, (data) => {
+    if (data.topic === "tickers.BTCUSDT" && data.data) {
+      console.log("📡 Actualizando precio en vivo:", data.data.lastPrice);
+      setPrice(data.data.lastPrice); // ✅ Guardar el precio correctamente
+    }
+  });
+
   console.log("🌐 Conectando a WebSocket de mercado:", WS_URL_MARKET);
-  const ws = setupWebSocket(WS_URL_MARKET, (data) => setPrice(data.price));
   return () => ws?.close();
 }, []);
 
