@@ -83,6 +83,7 @@ const handleStart = async () => {
     const data = await res.json();
     console.log("✅ Bot iniciado:", data);
     fetchStatus(); // ✅ Ahora se puede llamar sin errores
+    setStatus(true); // ✅ Actualiza el estado local
   } catch (error) {
     console.error("❌ Error al iniciar el bot:", error);
   }
@@ -96,6 +97,7 @@ const handleStop = async () => {
     const data = await res.json();
     console.log("🛑 Bot detenido:", data);
     fetchStatus(); // ✅ Ahora se puede llamar sin errores
+    setStatus(false); // ✅ Actualiza el estado local
   } catch (error) {
     console.error("❌ Error al detener el bot:", error);
   }
