@@ -7,7 +7,7 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "start": "npm run build && npx serve -s dist -l ${PORT:-8080}"
+    "start": "npx serve -s dist -l ${PORT:-8080}"
   },
   "dependencies": {
     "paquete": "^1.0.0",
