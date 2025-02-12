@@ -23,6 +23,7 @@ export function App() {
   // 📡 WebSocket con reconexión automática (con límite de intentos)
   const setupWebSocket = (url, onMessage, retries = 5) => {
     if (retries <= 0) return;
+  
     let ws = new WebSocket(url);
   
     ws.onopen = () => {
@@ -34,18 +35,21 @@ export function App() {
     };
   
     ws.onmessage = (event) => {
-      console.log("📡 Datos recibidos desde WS:", event.data); // <-- Verifica el contenido
-      try {
-        const data = JSON.parse(event.data);
-        console.log("📊 Procesando precio recibido:", data); // <-- Asegura que `data.price` existe
-        if (data.price) onMessage(data);
-        else console.warn("⚠️ No se encontró `price` en los datos recibidos", data);
-      } catch (error) {
-        console.error("❌ Error al procesar mensaje WS:", error);
+      const data = JSON.parse(event.data);
+      console.log("📡 Mensaje recibido del WebSocket:", data);
+      
+      if (data?.success === false) {
+        console.error("❌ Error en suscripción:", data);
+        return;
+      }
+  
+      if (data.topic === "tickers.BTCUSDT" && data.data) {
+        console.log("📊 Precio actualizado:", data.data.lastPrice);
+        onMessage(data);
       }
     };
   
-    ws.onerror = (error) => console.error(`❌ Error en WebSocket ${url}`, error);
+    ws.onerror = (error) => console.error(`❌ Error en WebSocket ${url}:`, error);
   
     ws.onclose = () => {
       console.warn(`⚠️ WebSocket cerrado. Reintentando conexión (${retries - 1} intentos restantes)...`);
@@ -54,6 +58,7 @@ export function App() {
   
     return ws;
   };
+  
   
 // 🔒 Conectar al WebSocket de Market con `wss://`
 useEffect(() => {
