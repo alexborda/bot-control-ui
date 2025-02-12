@@ -152,8 +152,10 @@ export function App() {
       {/* 📌 MENÚ DESPLEGABLE */}
       {menuOpen && (
         <div className="submenu">
-          <button className="button" onClick={handleStart} disabled={status}>🟢 Start</button>
-          <button className="button" onClick={handleStop} disabled={!status}>🔴 Stop</button>
+          <button onClick={handleStart} disabled={status === true} className="button">🟢 Start</button>
+
+<button onClick={handleStop} disabled={status === false} className="button">🔴 Stop</button>
+
         </div>
       )}
 
