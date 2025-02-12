@@ -13,63 +13,47 @@ export function App() {
   const [orders, setOrders] = useState([]);
   const [activeTab, setActiveTab] = useState("status");
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
-  const [menuOpen, setMenuOpen] = useState(false); // Inicializar como booleano
+  const [menuOpen, setMenuOpen] = useState(false);
   const [darkMode, setDarkMode] = useState(() => {
     const savedTheme = localStorage.getItem("theme");
     return savedTheme ? savedTheme === "dark" : window.matchMedia("(prefers-color-scheme: dark)").matches;
   });
 
-  // 📡 WebSocket con reconexión automática
-  const setupWebSocket = (url, onMessage) => {
+  // 📡 WebSocket con reconexión automática (con límite de intentos)
+  const setupWebSocket = (url, onMessage, retries = 5) => {
+    if (retries <= 0) return;
     let ws = new WebSocket(url);
     ws.onopen = () => console.log(`✅ Conectado a ${url}`);
     ws.onmessage = (event) => onMessage(JSON.parse(event.data));
     ws.onerror = (error) => console.error(`❌ Error en WebSocket ${url}`, error);
     ws.onclose = () => {
-      console.warn(`⚠️ WebSocket cerrado. Reintentando conexión a ${url}...`);
-      setTimeout(() => setupWebSocket(url, onMessage), 3000);
+      console.warn(`⚠️ WebSocket cerrado. Reintentando conexión (${retries - 1} intentos restantes)...`);
+      setTimeout(() => setupWebSocket(url, onMessage, retries - 1), 3000);
     };
     return ws;
   };
-  // Enviar orden
+
+  // 📩 Enviar orden
   const sendOrder = async () => {
     const order = {
       secret: import.meta.env.VITE_API_SECRET,
-
       order_type: orderType,
       symbol,
       qty,
       price,
     };
-    const response = await fetch(`${API_URL}/trade`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(order),
-    });
-    const result = await response.json();
-    setOrders((prevOrders) => [...prevOrders, result]);
+    try {
+      const response = await fetch(`${API_URL}/trade`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(order),
+      });
+      const result = await response.json();
+      setOrders((prevOrders) => [...prevOrders, result]);
+    } catch (error) {
+      console.error("❌ Error al enviar la orden:", error);
+    }
   };
-
-  // cambia la pantalla si es un mobil
-  useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
-
-  // 🔒 Conectar al WebSocket de Market con `wss://`
-  useEffect(() => {
-    const ws = setupWebSocket(WS_URL_MARKET, (data) => setPrice(data.price));
-    return () => ws.close();
-  }, [WS_URL_MARKET]);
-
-  // 🔒 Conectar al WebSocket de Orders con `wss://`
-  useEffect(() => {
-    const ws = setupWebSocket(WS_URL_ORDERS, (data) => setOrders((prevOrders) => [...prevOrders, data]));
-    return () => ws.close();
-  }, [WS_URL_ORDERS]);
 
   // 📊 Obtener estado del bot
   useEffect(() => {
@@ -78,20 +62,42 @@ export function App() {
         const res = await fetch(`${API_URL}/status`);
         if (!res.ok) throw new Error("Error al obtener el estado");
         const data = await res.json();
-        setStatus(data.status); // ✅ Usar directamente el valor booleano
+        setStatus(data.status);
       } catch (error) {
         console.error("⚠️ Error al obtener estado:", error);
         setStatus(null);
       }
     };
 
-  fetchStatus();
-  const interval = setInterval(fetchStatus, 5000);
-  return () => clearInterval(interval);
-}, []);
+    fetchStatus();
+    const interval = setInterval(fetchStatus, 5000);
+    return () => clearInterval(interval);
+  }, []);
 
+  // 🔒 Conectar a WebSocket de Market con `wss://`
   useEffect(() => {
-    const root = document.documentElement; //Obtiene el <html>
+    const ws = setupWebSocket(WS_URL_MARKET, (data) => setPrice(data.price));
+    return () => ws?.close();
+  }, []);
+
+  // 🔒 Conectar a WebSocket de Orders con `wss://`
+  useEffect(() => {
+    const ws = setupWebSocket(WS_URL_ORDERS, (data) => setOrders((prevOrders) => [...prevOrders, data]));
+    return () => ws?.close();
+  }, []);
+
+  // 🌐 Detectar si es móvil
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  // 🎨 Modo oscuro
+  useEffect(() => {
+    const root = document.documentElement;
     if (darkMode) {
       root.classList.add("dark");
       localStorage.setItem("theme", "dark");
@@ -107,23 +113,25 @@ export function App() {
         <nav className="navbar">
           <h1 className="navbar-title">Trading Bot {isMobile ? "📱" : "💻"}</h1>
           <div className="hidden md:flex space-x-4">
+            <button className="menu-item" onClick={() => setMenuOpen(!menuOpen)}>☰</button>
             <button className="menu-item" onClick={() => setActiveTab("status")}>📊 Estado</button>
             <button className="menu-item" onClick={() => setActiveTab("order")}>🛒 Enviar Orden</button>
             <button className="menu-item" onClick={() => setActiveTab("price")}>💰 Precio</button>
             <button className="menu-item" onClick={() => setDarkMode(!darkMode)}>
               {darkMode ? "🌞 Light" : "🌙 Dark"}
             </button>
-            <button className="menu-item" onClick={() => setMenuOpen(!menuOpen)}>☰</button>
           </div>
         </nav>
       </header>
-      /* 📌 MENÚ DESPLEGABLE */}
+
+      {/* 📌 MENÚ DESPLEGABLE */}
       {menuOpen && (
         <div className="submenu">
-          <button className="button" onClick={handleStart}>🟢 Start</button>
-          <button className="button" onClick={handleStop}>🔴 Stop</button>
+          <button className="button" onClick={() => fetch(`${API_URL}/start`, { method: "POST" })}>🟢 Start</button>
+          <button className="button" onClick={() => fetch(`${API_URL}/stop`, { method: "POST" })}>🔴 Stop</button>
         </div>
       )}
+
       {/* Contenido dinámico */}
       <div className="container">
         {activeTab === "status" && (
