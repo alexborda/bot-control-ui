@@ -25,7 +25,13 @@ export function App() {
     if (retries <= 0) return;
     let ws = new WebSocket(url);
   
-    ws.onopen = () => console.log(`✅ Conectado a ${url}`);
+    ws.onopen = () => {
+      console.log(`✅ Conectado a WebSocket: ${url}`);
+      
+      // 🔥 Suscribirse al canal de precios de BTC/USDT en Bybit
+      const subscribeMessage = { op: "subscribe", args: ["tickers.BTCUSDT"] };
+      ws.send(JSON.stringify(subscribeMessage)); // 🔥 Enviar la suscripción aquí
+    };
   
     ws.onmessage = (event) => {
       console.log("📡 Datos recibidos desde WS:", event.data); // <-- Verifica el contenido
