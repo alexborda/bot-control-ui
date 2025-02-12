@@ -1,8 +1,9 @@
 import { useState, useEffect, useCallback} from "preact/hooks";
 
 const API_URL = import.meta.env.VITE_BACKEND_URL;
-const WS_URL_MARKET = API_URL.replace(/^http/, "wss") + "/ws/market"; // 🔒 Asegurar wss://
-const WS_URL_ORDERS = API_URL.replace(/^http/, "wss") + "/ws/orders"; // 🔒 Asegurar wss://
+const API_WS_URL = import.meta.env.VITE_WS_URL;
+const WS_URL_MARKET = API_WS_URL + "/ws/market"; // 🔒 Asegurar wss://
+const WS_URL_ORDERS = API_WS_URL + "/ws/orders"; // 🔒 Asegurar wss://
 
 export function App() {
   const [status, setStatus] = useState(null);
