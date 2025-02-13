@@ -67,7 +67,7 @@ useEffect(() => {
   ws.onopen = () => {
     console.log("✅ Conectado a WebSocket de mercado.");
     const subscribeMessage = { op: "subscribe", args: ["tickers.BTCUSDT"] };
-    ws.send(JSON.stringify(subscribeMessage)); // 🔥 Enviar la suscripción aquí
+    ws.send(JSON.stringify(subscribeMessage)); //Enviar la suscripción aquí
   };
 
   ws.onmessage = (event) => {
@@ -77,18 +77,18 @@ useEffect(() => {
       if (message.topic === "tickers.BTCUSDT" && message.data) {
         const lastPrice = message.data.lastPrice;
         console.log("📡 Precio actualizado:", lastPrice);
-        setPrice(lastPrice); // 🔥 Actualizar el estado
+        setPrice(lastPrice); //Actualizar el estado
       }
     } catch (error) {
-      console.error("❌ Error procesando mensaje WebSocket:", error);
+      console.error("Error procesando mensaje WebSocket:", error);
     }
   };
 
-  ws.onerror = (error) => console.error("❌ Error en WebSocket de mercado:", error);
+  ws.onerror = (error) => console.error("Error en WebSocket de mercado:", error);
 
   ws.onclose = () => {
     console.warn("⚠️ WebSocket cerrado. Intentando reconectar en 3s...");
-    setTimeout(() => window.location.reload(), 3000); // 🔄 Recargar la página si se desconecta
+    setTimeout(() => window.location.reload(), 3000); // Recargar la página si se desconecta
   };
 
   return () => {
