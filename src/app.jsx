@@ -62,14 +62,31 @@ export function App() {
   
 // 🔒 Conectar al WebSocket de Market con `wss://`
 useEffect(() => {
-  const ws = setupWebSocket(WS_URL_MARKET, (data) => {
-    if (data.topic === "tickers.BTCUSDT" && data.data) {
-      setPrice(data.data.lastPrice); // ✅ Actualiza el precio en la UI
-    }
-  });
+  const ws = new WebSocket(WS_URL_MARKET);
 
-  return () => ws?.close();
+  ws.onopen = () => {
+    console.log("✅ Conectado a WebSocket de mercado.");
+    ws.send(JSON.stringify({ op: "subscribe", args: ["tickers.BTCUSDT"] }));
+  };
+
+  ws.onmessage = (event) => {
+    const message = JSON.parse(event.data);
+    if (message.topic === "tickers.BTCUSDT" && message.data) {
+      console.log("📡 Precio recibido:", message.data.lastPrice);
+      setPrice(message.data.lastPrice); // 🔥 Ahora sí se actualiza la UI
+    }
+  };
+
+  ws.onerror = (error) => console.error("❌ Error en WebSocket:", error);
+
+  ws.onclose = () => {
+    console.warn("⚠️ WebSocket cerrado. Reintentando conexión...");
+    setTimeout(() => window.location.reload(), 5000); // 🚀 Recarga la página si se cierra
+  };
+
+  return () => ws.close();
 }, []);
+
 
 // 🔒 Conectar al WebSocket de Orders con `wss://`
 useEffect(() => {
