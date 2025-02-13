@@ -61,39 +61,44 @@ export function App() {
   
   
 // 🔒 Conectar al WebSocket de Market con `wss://`
+// 🔒 Conectar al WebSocket de Market con `wss://`
 useEffect(() => {
-  const ws = new WebSocket(WS_URL_MARKET);
- 
-  ws.onopen = () => {
-    console.log("✅ Conectado a WebSocket de mercado.");
-    const subscribeMessage = { op: "subscribe", args: ["tickers.BTCUSDT"] };
-    ws.send(JSON.stringify(subscribeMessage)); //Enviar la suscripción aquí
-  };
+  let ws;
 
-  ws.onmessage = (event) => {
-    try {
-      const message = JSON.parse(event.data);
+  const connectWebSocket = () => {
+    ws = new WebSocket(WS_URL_MARKET);
 
-      if (message.topic === "tickers.BTCUSDT" && message.data) {
-        const lastPrice = message.data.lastPrice;
-        console.log("📡 Precio actualizado:", lastPrice);
-        setPrice(lastPrice); //Actualizar el estado
+    ws.onopen = () => {
+      console.log("✅ Conectado a WebSocket de mercado.");
+      ws.send(JSON.stringify({ op: "subscribe", args: ["tickers.BTCUSDT"] }));
+    };
+
+    ws.onmessage = (event) => {
+      try {
+        const message = JSON.parse(event.data);
+        if (message.topic === "tickers.BTCUSDT" && message.data) {
+          const lastPrice = message.data.lastPrice;
+          console.log("📡 Precio actualizado:", lastPrice);
+          setPrice(lastPrice);
+        }
+      } catch (error) {
+        console.error("❌ Error procesando mensaje WebSocket:", error);
       }
-    } catch (error) {
-      console.error("Error procesando mensaje WebSocket:", error);
-    }
+    };
+
+    ws.onerror = (error) => console.error("❌ Error en WebSocket de mercado:", error);
+
+    ws.onclose = () => {
+      console.warn("⚠️ WebSocket cerrado. Intentando reconectar en 3s...");
+      setTimeout(connectWebSocket, 3000); // 🔄 Reintenta sin recargar la página
+    };
   };
 
-  ws.onerror = (error) => console.error("Error en WebSocket de mercado:", error);
-
-  ws.onclose = () => {
-    console.warn("⚠️ WebSocket cerrado. Intentando reconectar en 3s...");
-    setTimeout(() => window.location.reload(), 3000); // Recargar la página si se desconecta
-  };
+  connectWebSocket(); // 🔥 Iniciar conexión
 
   return () => {
     console.log("🛑 Cerrando WebSocket de mercado...");
-    ws.close();
+    ws?.close();
   };
 }, []);
 
