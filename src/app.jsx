@@ -63,7 +63,7 @@ export function App() {
 // 🔒 Conectar al WebSocket de Market con `wss://`
 useEffect(() => {
   const ws = new WebSocket(WS_URL_MARKET);
-
+  console.log("🔄 Estado actualizado en la UI:", price);
   ws.onopen = () => {
     console.log("✅ Conectado a WebSocket de mercado.");
     const subscribeMessage = { op: "subscribe", args: ["tickers.BTCUSDT"] };
@@ -95,7 +95,6 @@ useEffect(() => {
     console.log("🛑 Cerrando WebSocket de mercado...");
     ws.close();
   };
-  console.log("🔄 Estado actualizado en la UI:", price);
 }, [price]);
 
 
