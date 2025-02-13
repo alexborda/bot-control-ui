@@ -61,7 +61,6 @@ export function App() {
   
   
 // 🔒 Conectar al WebSocket de Market con `wss://`
-// 🔒 Conectar al WebSocket de Market con `wss://`
 useEffect(() => {
   const ws = new WebSocket(WS_URL_MARKET);
 
@@ -96,7 +95,8 @@ useEffect(() => {
     console.log("🛑 Cerrando WebSocket de mercado...");
     ws.close();
   };
-}, []);
+  console.log("🔄 Estado actualizado en la UI:", price);
+}, [price]);
 
 
 // 🔒 Conectar al WebSocket de Orders con `wss://`
@@ -249,11 +249,11 @@ const handleStop = async () => {
           </div>
         )}
         {activeTab === "price" && (
-  <div className="card">
-    <h2>💰 Precio en Vivo</h2>
-    <p>{price !== null ? `$${price}` : "Cargando..."}</p>
-  </div>
-)}
+          <div className="card">
+            <h2>💰 Precio en Vivo</h2>
+            <p>{price !== null ? `$${price}` : "Cargando..."}</p>
+          </div>
+        )}
 
       </div>
 
