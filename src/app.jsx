@@ -71,11 +71,15 @@ useEffect(() => {
 
   ws.onmessage = (event) => {
     const message = JSON.parse(event.data);
+  
     if (message.topic === "tickers.BTCUSDT" && message.data) {
-      console.log("📡 Precio recibido:", message.data.lastPrice);
-      setPrice(message.data.lastPrice); // 🔥 Ahora sí se actualiza la UI
+      const lastPrice = message.data.lastPrice; // Extraer el precio
+      console.log("📡 Precio actualizado:", lastPrice);
+  
+      // 🔥 Asegurar que el estado se actualiza correctamente en React
+      setPrice(lastPrice);
     }
-  };
+  };  
 
   ws.onerror = (error) => console.error("❌ Error en WebSocket:", error);
 
