@@ -2,8 +2,8 @@ import { useState, useEffect, useCallback} from "preact/hooks";
 
 const API_URL = import.meta.env.VITE_BACKEND_URL;
 const API_WS_URL = import.meta.env.VITE_WS_URL;
-const WS_URL_MARKET = API_WS_URL + "/ws/market"; // 🔒 Asegurar wss://
-const WS_URL_ORDERS = API_WS_URL + "/ws/orders"; // 🔒 Asegurar wss://
+const WS_URL_MARKET = API_WS_URL + "/ws/market"; //Asegurar wss://
+const WS_URL_ORDERS = API_WS_URL + "/ws/orders"; //Asegurar wss://
 
 export function App() {
   const [status, setStatus] = useState(null);
@@ -20,7 +20,7 @@ export function App() {
     return savedTheme ? savedTheme === "dark" : window.matchMedia("(prefers-color-scheme: dark)").matches;
   });
 
-  // 📡 WebSocket con reconexión automática (con límite de intentos)
+  // WebSocket con reconexión automática (con límite de intentos)
   const setupWebSocket = (url, onMessage, retries = 5) => {
     if (retries <= 0) return;
   
@@ -29,9 +29,9 @@ export function App() {
     ws.onopen = () => {
       console.log(`✅ Conectado a WebSocket: ${url}`);
       
-      // 🔥 Suscribirse al canal de precios de BTC/USDT en Bybit
+      //Suscribirse al canal de precios de BTC/USDT en Bybit
       const subscribeMessage = { op: "subscribe", args: ["tickers.BTCUSDT"] };
-      ws.send(JSON.stringify(subscribeMessage)); // 🔥 Enviar la suscripción aquí
+      ws.send(JSON.stringify(subscribeMessage)); //Enviar la suscripción aquí
     };
   
     ws.onmessage = (event) => {
@@ -39,7 +39,7 @@ export function App() {
       console.log("📡 Mensaje recibido del WebSocket:", data);
       
       if (data?.success === false) {
-        console.error("❌ Error en suscripción:", data);
+        console.error("⚠️ Error en suscripción:", data);
         return;
       }
   
@@ -59,9 +59,7 @@ export function App() {
     return ws;
   };
   
-  
-// 🔒 Conectar al WebSocket de Market con `wss://`
-// 🔒 Conectar al WebSocket de Market con `wss://`
+  // Conectar al WebSocket de Market con `wss://`
 useEffect(() => {
   let ws;
 
@@ -82,11 +80,11 @@ useEffect(() => {
           setPrice(lastPrice);
         }
       } catch (error) {
-        console.error("❌ Error procesando mensaje WebSocket:", error);
+        console.error("⚠️ Error procesando mensaje WebSocket:", error);
       }
     };
 
-    ws.onerror = (error) => console.error("❌ Error en WebSocket de mercado:", error);
+    ws.onerror = (error) => console.error("⚠️ Error en WebSocket de mercado:", error);
 
     ws.onclose = () => {
       console.warn("⚠️ WebSocket cerrado. Intentando reconectar en 3s...");
@@ -94,7 +92,7 @@ useEffect(() => {
     };
   };
 
-  connectWebSocket(); // 🔥 Iniciar conexión
+  connectWebSocket(); //Iniciar conexión
 
   return () => {
     console.log("🛑 Cerrando WebSocket de mercado...");
@@ -103,14 +101,14 @@ useEffect(() => {
 }, []);
 
 
-// 🔒 Conectar al WebSocket de Orders con `wss://`
+// Conectar al WebSocket de Orders con `wss://`
 useEffect(() => {
   console.log("🌐 Conectando a WebSocket de órdenes:", WS_URL_ORDERS);
   const ws = setupWebSocket(WS_URL_ORDERS, (data) => setOrders((prevOrders) => [...prevOrders, data]));
   return () => ws?.close();
 }, []);
 
-  // 📩 Enviar orden
+  //Enviar orden
   const sendOrder = async () => {
     const order = {
       secret: import.meta.env.VITE_API_SECRET,
@@ -128,14 +126,14 @@ useEffect(() => {
       const result = await response.json();
       setOrders((prevOrders) => [...prevOrders, result]);
     } catch (error) {
-      console.error("❌ Error al enviar la orden:", error);
+      console.error("⚠️ Error al enviar la orden:", error);
     }
   };
 
-// 📊 Obtener estado del bot
+//Obtener estado del bot
 const fetchStatus = async () => {
   try {
-    const res = await fetch(`${API_URL}/status?t=${Date.now()}`); // ⚡ Evita caché con un timestamp
+    const res = await fetch(`${API_URL}/status?t=${Date.now()}`); //Evita caché con un timestamp
     if (!res.ok) throw new Error("Error al obtener el estado");
     const data = await res.json();
     setStatus(data.status);
@@ -149,10 +147,10 @@ useEffect(() => {
   fetchStatus();
   const interval = setInterval(fetchStatus, 5000);
 
-  return () => clearInterval(interval); // ✅ Limpieza de intervalos
+  return () => clearInterval(interval); //Limpieza de intervalos
 }, []);
 
-// 📌 Manejar inicio del bot
+// Manejar inicio del bot
 const handleStart = async () => {
   try {
     const res = await fetch(`${API_URL}/start`, { method: "POST" });
@@ -160,13 +158,13 @@ const handleStart = async () => {
     const data = await res.json();
     console.log("✅ Bot iniciado:", data);
 
-    await fetchStatus(); // ✅ Forzar actualización inmediata
+    await fetchStatus(); //Forzar actualización inmediata
   } catch (error) {
-    console.error("❌ Error al iniciar el bot:", error);
+    console.error("⚠️ Error al iniciar el bot:", error);
   }
 };
 
-// 📌 Manejar detención del bot
+// Manejar detención del bot
 const handleStop = async () => {
   try {
     const res = await fetch(`${API_URL}/stop`, { method: "POST" });
@@ -174,13 +172,13 @@ const handleStop = async () => {
     const data = await res.json();
     console.log("🛑 Bot detenido:", data);
 
-    await fetchStatus(); // ✅ Forzar actualización inmediata
+    await fetchStatus(); //Forzar actualización inmediata
   } catch (error) {
-    console.error("❌ Error al detener el bot:", error);
+    console.error("⚠️ Error al detener el bot:", error);
   }
 };
 
-  // 🌐 Detectar si es móvil
+  // Detectar si es móvil
   useEffect(() => {
     const handleResize = () => {
       setIsMobile(window.innerWidth < 768);
@@ -189,7 +187,7 @@ const handleStop = async () => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // 🎨 Modo oscuro
+  //Modo oscuro
   useEffect(() => {
     const root = document.documentElement;
     if (darkMode) {
@@ -218,7 +216,7 @@ const handleStop = async () => {
         </nav>
       </header>
 
-      {/* 📌 MENÚ DESPLEGABLE */}
+      {/* MENÚ DESPLEGABLE */}
       {menuOpen && (
         <div className="submenu">
           <button onClick={handleStart} disabled={status} className="button">🟢 Start</button>
@@ -253,7 +251,7 @@ const handleStop = async () => {
         )}
         {activeTab === "price" && (
           <div className="card">
-            <h2>💰 Precio en Vivo</h2>
+            <h2>💰 Precios en Vivo</h2>
             <p>{price !== null ? `$${price}` : "Cargando..."}</p>
           </div>
         )}
