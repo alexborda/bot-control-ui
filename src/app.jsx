@@ -138,7 +138,6 @@ const fetchStatus = async () => {
     const res = await fetch(`${API_URL}/status?t=${Date.now()}`); // ⚡ Evita caché con un timestamp
     if (!res.ok) throw new Error("Error al obtener el estado");
     const data = await res.json();
-    console.log("📡 Estado actualizado:", data.status);
     setStatus(data.status);
   } catch (error) {
     console.error("⚠️ Error al obtener estado:", error);
