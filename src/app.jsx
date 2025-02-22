@@ -146,10 +146,19 @@ const fetchStatus = async () => {
 };
 
 useEffect(() => {
-  fetchStatus();
-  const interval = setInterval(fetchStatus, 50000);
+  const fetchWhenVisible = () => {
+    if (document.visibilityState === "visible") {
+      fetchStatus();
+    }
+  };
 
-  return () => clearInterval(interval); //Limpieza de intervalos
+  document.addEventListener("visibilitychange", fetchWhenVisible);
+  const interval = setInterval(fetchStatus, 30000);
+
+  return () => {
+    clearInterval(interval);
+    document.removeEventListener("visibilitychange", fetchWhenVisible);
+  };
 }, []);
 
 // Manejar inicio del bot
