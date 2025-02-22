@@ -88,7 +88,7 @@ useEffect(() => {
 
     ws.onclose = () => {
       console.warn("⚠️ WebSocket cerrado. Intentando reconectar en 3s...");
-      setTimeout(connectWebSocket, 3000); // 🔄 Reintenta sin recargar la página
+      setTimeout(connectWebSocket, 3000); // Reintenta sin recargar la página
     };
   };
 
@@ -153,7 +153,7 @@ useEffect(() => {
   };
 
   document.addEventListener("visibilitychange", fetchWhenVisible);
-  const interval = setInterval(fetchStatus, 30000);
+  const interval = setInterval(fetchStatus, 60000);
 
   return () => {
     clearInterval(interval);
