@@ -140,6 +140,8 @@ const fetchStatus = async () => {
   } catch (error) {
     console.error("⚠️ Error al obtener estado:", error);
     setStatus(null);
+  }finally {
+    isFetching = false;
   }
 };
 
