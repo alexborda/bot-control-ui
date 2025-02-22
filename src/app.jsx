@@ -145,7 +145,7 @@ const fetchStatus = async () => {
 
 useEffect(() => {
   fetchStatus();
-  const interval = setInterval(fetchStatus, 5000);
+  const interval = setInterval(fetchStatus, 50000);
 
   return () => clearInterval(interval); //Limpieza de intervalos
 }, []);
