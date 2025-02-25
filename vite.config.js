@@ -9,6 +9,6 @@ export default defineConfig({
   },
   server: {
     host: true,
-    port: 8080, // Usa el puerto de Railway o 3000 por defecto
+    port: 80, // Usa el puerto de Railway o 3000 por defecto
   },
 });
