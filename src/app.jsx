@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback} from "preact/hooks";
 
-const API_URL = import.meta.env.BACKEND_URL || "http://tradingbo.internal";
-const API_WS_URL = import.meta.env.BACKEND_WSS || "WSS://tradingbo.internal";
+const API_URL = import.meta.env.BACKEND_URL;
+const API_WS_URL = import.meta.env.BACKEND_WSS;
 const WS_URL_MARKET = API_WS_URL + "/ws/market"; //Asegurar wss://
 const WS_URL_ORDERS = API_WS_URL + "/ws/orders"; //Asegurar wss://
 
