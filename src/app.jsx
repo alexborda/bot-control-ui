@@ -153,7 +153,7 @@ useEffect(() => {
   };
 
   document.addEventListener("visibilitychange", fetchWhenVisible);
-  const interval = setInterval(fetchStatus, 300000);
+  const interval = setInterval(fetchStatus, 30000);
 
   return () => {
     clearInterval(interval);
